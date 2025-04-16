@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Song } from '../data/songs';
 import { formatTime } from '../utils/formatTime';
 import { motion } from 'framer-motion';
-import { popupVariants, fadeInVariants } from '../utils/transitions';
 import { VolumeControl } from './VolumeControl';
+import Image from 'next/image';
 
 interface ExpandedSongCardProps {
   song: Song;
@@ -55,6 +55,15 @@ export default function ExpandedSongCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const progressContainerRef = useRef<HTMLDivElement>(null);
   
+  // Memoize the formatted time values to prevent unnecessary recalculations
+  const formattedProgress = useMemo(() => formatTime(progress), [progress]);
+  const formattedDuration = useMemo(() => formatTime(duration), [duration]);
+  
+  // Calculate progress thumb position for animations
+  const progressThumbPosition = useMemo(() => {
+    return `calc(${progressPercentage}% - 6px)`;
+  }, [progressPercentage]);
+  
   // Handle clicks outside to close the card
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -72,24 +81,32 @@ export default function ExpandedSongCard({
   }, [onClose]);
   
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (progressContainerRef.current) {
+    if (progressContainerRef.current && isFinite(duration) && duration > 0) {
       const rect = progressContainerRef.current.getBoundingClientRect();
       const position = e.clientX - rect.left;
-      const percentage = position / rect.width;
+      // Ensure percentage is within valid range (0-1)
+      const percentage = Math.max(0, Math.min(1, position / rect.width));
       const newTime = percentage * duration;
-      onProgressChange(newTime);
+      // Make sure we're passing a valid, finite number
+      if (isFinite(newTime) && newTime >= 0) {
+        onProgressChange(newTime);
+      }
     }
   };
 
   const handleProgressTouch = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (progressContainerRef.current) {
+    if (progressContainerRef.current && isFinite(duration) && duration > 0) {
       setIsDragging(true);
       const rect = progressContainerRef.current.getBoundingClientRect();
       const touch = e.touches[0];
       const position = touch.clientX - rect.left;
+      // Ensure percentage is within valid range (0-1)
       const percentage = Math.max(0, Math.min(1, position / rect.width));
       const newTime = percentage * duration;
-      onProgressChange(newTime);
+      // Make sure we're passing a valid, finite number
+      if (isFinite(newTime) && newTime >= 0) {
+        onProgressChange(newTime);
+      }
     }
   };
 
@@ -104,11 +121,6 @@ export default function ExpandedSongCard({
       document.removeEventListener('touchend', handleTouchEnd);
     };
   }, []);
-
-  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTime = parseFloat(e.target.value);
-    onProgressChange(newTime);
-  };
 
   const handleVolumeChange = (newVolume: number) => {
     onVolumeChange(newVolume);
@@ -158,9 +170,11 @@ export default function ExpandedSongCard({
           
           {/* Album art */}
           <div className="relative mt-2 mb-4 w-40 h-40 sm:w-56 sm:h-56 mx-auto">
-            <img 
+            <Image 
               src={song.cover} 
               alt={`${song.title} album art`} 
+              width={224}
+              height={224}
               className="w-full h-full object-cover rounded-lg shadow-lg"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg transition-opacity duration-200 opacity-0 hover:opacity-100">
@@ -192,8 +206,8 @@ export default function ExpandedSongCard({
           <div className="w-full px-2 sm:px-4">
             {/* Progress bar */}
             <div className="flex justify-between text-xs mb-1 text-white/70">
-              <span>{formatTime(progress)}</span>
-              <span>{formatTime(duration)}</span>
+              <span>{formattedProgress}</span>
+              <span>{formattedDuration}</span>
             </div>
             
             <div 
@@ -210,7 +224,7 @@ export default function ExpandedSongCard({
               <div 
                 className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md"
                 style={{ 
-                  left: `calc(${progressPercentage}% - 6px)`, 
+                  left: progressThumbPosition, 
                   opacity: isDragging ? 1 : 0,
                   transition: 'opacity 0.2s ease'
                 }}
@@ -353,9 +367,11 @@ export default function ExpandedSongCard({
                 className="flex items-center bg-white/5 hover:bg-white/10 p-2 rounded-lg cursor-pointer transition-colors group"
               >
                 <div className="relative mr-3 flex-shrink-0">
-                  <img 
+                  <Image 
                     src={suggestedSong.cover} 
                     alt={suggestedSong.title} 
+                    width={40}
+                    height={40}
                     className="w-10 h-10 rounded object-cover"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 rounded flex items-center justify-center transition-opacity">

@@ -10,7 +10,7 @@ interface MusicCardProps {
   onClick: () => void;
 }
 
-export default function MusicCard({ imageUrl, title, artist, onClick }: MusicCardProps) {
+export default function MusicCard({ title, artist, onClick }: MusicCardProps) {
   return (
     <motion.div 
       className="flex-shrink-0 w-36 cursor-pointer"

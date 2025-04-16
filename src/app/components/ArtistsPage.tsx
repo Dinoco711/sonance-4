@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { songs } from '../data/songs';
 import SongList from './SongList';
+import Image from 'next/image';
 
 interface ArtistsPageProps {
   onClose: () => void;
@@ -55,9 +56,11 @@ const ArtistsPage: React.FC<ArtistsPageProps> = ({ onClose, onSongSelect }) => {
             className="relative overflow-hidden bg-gradient-to-b from-rose-900 to-rose-800 h-80 md:h-96"
           >
             <div className="absolute inset-0 overflow-hidden opacity-30" style={{ mixBlendMode: 'overlay' }}>
-              <img 
+              <Image 
                 src={currentArtist.cover} 
                 alt={currentArtist.name}
+                width={800}
+                height={600}
                 className="w-full h-full object-cover blur-sm"
               />
             </div>
@@ -82,9 +85,11 @@ const ArtistsPage: React.FC<ArtistsPageProps> = ({ onClose, onSongSelect }) => {
             
             <div className="absolute bottom-0 left-0 p-8 flex flex-col md:flex-row items-end md:items-center">
               <div className="w-40 h-40 overflow-hidden rounded-xl shadow-2xl mr-6 mb-4 md:mb-0 border-4 border-white">
-                <img 
+                <Image 
                   src={currentArtist.cover} 
                   alt={currentArtist.name}
+                  width={160}
+                  height={160}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -148,9 +153,11 @@ const ArtistsPage: React.FC<ArtistsPageProps> = ({ onClose, onSongSelect }) => {
                         >
                           <div className="mr-5 text-neutral-400 w-5 text-center font-medium">{index + 1}</div>
                           <div className="w-12 h-12 rounded-md overflow-hidden mr-4 flex-shrink-0">
-                            <img 
+                            <Image 
                               src={song.cover} 
                               alt={song.title} 
+                              width={48}
+                              height={48}
                               className="w-full h-full object-cover" 
                               loading="lazy" 
                             />
@@ -189,9 +196,11 @@ const ArtistsPage: React.FC<ArtistsPageProps> = ({ onClose, onSongSelect }) => {
                         onClick={() => setSelectedArtist(artist?.name || null)}
                       >
                         <div className="w-14 h-14 rounded-full overflow-hidden mr-4 flex-shrink-0">
-                          <img 
+                          <Image 
                             src={artist?.cover} 
                             alt={artist?.name} 
+                            width={56}
+                            height={56}
                             className="w-full h-full object-cover" 
                             loading="lazy" 
                           />
@@ -254,11 +263,13 @@ const ArtistsPage: React.FC<ArtistsPageProps> = ({ onClose, onSongSelect }) => {
                         className="group cursor-pointer"
                         onClick={() => setSelectedArtist(artist.name)}
                       >
-                        <div className="aspect-square rounded-full overflow-hidden mb-3 shadow-sm">
-                          <img 
+                        <div className="rounded-full overflow-hidden aspect-square group-hover:shadow-xl transition-all duration-300 mb-3 relative">
+                          <Image 
                             src={artist.cover} 
                             alt={artist.name}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            width={200}
+                            height={200}
+                            className="w-full h-full object-cover"
                             loading="lazy"
                           />
                         </div>
@@ -353,9 +364,11 @@ const ArtistsPage: React.FC<ArtistsPageProps> = ({ onClose, onSongSelect }) => {
                   >
                     <div className="bg-white p-5 rounded-xl shadow-sm group-hover:shadow-md transition-all">
                       <div className="aspect-square rounded-full overflow-hidden mb-4 border-2 border-rose-100">
-                        <img 
+                        <Image 
                           src={artist.cover} 
                           alt={artist.name}
+                          width={200}
+                          height={200}
                           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
                         />
@@ -381,9 +394,11 @@ const ArtistsPage: React.FC<ArtistsPageProps> = ({ onClose, onSongSelect }) => {
                     onClick={() => setSelectedArtist(artist.name)}
                   >
                     <div className="w-16 h-16 rounded-full overflow-hidden mr-4 flex-shrink-0">
-                      <img 
+                      <Image 
                         src={artist.cover} 
                         alt={artist.name} 
+                        width={64}
+                        height={64}
                         className="w-full h-full object-cover" 
                         loading="lazy" 
                       />

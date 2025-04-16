@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Song } from '../data/songs';
-import { formatTime } from '../utils/formatTime';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import type { Song } from '../data/songs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { slideUpVariants } from '../utils/transitions';
+import Image from 'next/image';
 
 interface NowPlayingBarProps {
-  currentSong: Song | null;
+  currentSong: Song;
   isPlaying: boolean;
   progress: number;
   duration: number;
@@ -15,12 +15,12 @@ interface NowPlayingBarProps {
   onPlayPause: () => void;
   onNext: () => void;
   onPrevious: () => void;
-  onProgressChange: (time: number) => void;
-  onVolumeChange: (volume: number) => void;
+  onProgressChange: (newProgress: number) => void;
+  onVolumeChange: (newVolume: number) => void;
   onExpand: () => void;
 }
 
-export default function NowPlayingBar({
+const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
   currentSong,
   isPlaying,
   progress,
@@ -32,7 +32,7 @@ export default function NowPlayingBar({
   onProgressChange,
   onVolumeChange,
   onExpand
-}: NowPlayingBarProps) {
+}) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isVolumeOpen, setIsVolumeOpen] = useState(false);
@@ -40,6 +40,11 @@ export default function NowPlayingBar({
   const [isShuffleOn, setIsShuffleOn] = useState(false);
   const [repeatMode, setRepeatMode] = useState(0); // 0: off, 1: repeat all, 2: repeat one
   const volumeRef = useRef<HTMLDivElement>(null);
+  
+  // Calculate progress percentage once to avoid recalculations during render
+  const progressPercentage = useMemo(() => {
+    return ((progress || 0) / (duration || 1)) * 100;
+  }, [progress, duration]);
   
   // Track previous volume for mute/unmute functionality
   useEffect(() => {
@@ -70,20 +75,34 @@ export default function NowPlayingBar({
 
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = parseFloat(e.target.value);
-    onProgressChange(newTime);
+    // Validate the time is a finite, non-negative number
+    if (isFinite(newTime) && newTime >= 0) {
+      onProgressChange(newTime);
+    } else {
+      console.warn('Invalid time value in progress change:', newTime);
+    }
   };
   
-  const toggleVolume = () => {
+  const toggleVolume = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering expand
     // On mobile, we just want to show/hide the volume panel without toggling mute
     setIsVolumeOpen(!isVolumeOpen);
   };
 
-  const toggleMute = () => {
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering expand
     if (volume > 0) {
       onVolumeChange(0);
     } else {
       onVolumeChange(previousVolume);
     }
+  };
+
+  // Volume slider event handler
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation(); // Stop event propagation
+    const newVolume = parseFloat(e.target.value);
+    onVolumeChange(newVolume);
   };
 
   if (!currentSong) return null;
@@ -111,9 +130,11 @@ export default function NowPlayingBar({
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              <img 
+              <Image 
                 src={currentSong.cover} 
                 alt={`${currentSong.title} by ${currentSong.artist}`}
+                width={48}
+                height={48}
                 className="w-full h-full object-cover"
               />
             </motion.div>
@@ -246,7 +267,7 @@ export default function NowPlayingBar({
                 <div className="h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-white/80 rounded-full"
-                    style={{ width: `${(progress / duration) * 100}%` }}
+                    style={{ width: `${progressPercentage}%` }}
                   ></div>
                 </div>
                 <input
@@ -277,7 +298,7 @@ export default function NowPlayingBar({
             <button
               onClick={(e) => {
                 e.stopPropagation(); // Prevent triggering expand
-                toggleMute();
+                toggleMute(e);
               }}
               className="text-white p-1 rounded-full hover:bg-gray-700 transition-colors flex sm:hidden items-center justify-center"
               aria-label={volume > 0 ? "Mute" : "Unmute"}
@@ -334,14 +355,65 @@ export default function NowPlayingBar({
             </button>
             
             {/* Desktop Volume Control */}
-            <div className="relative flex items-center mr-1 sm:mr-0 hidden sm:block" ref={volumeRef}>
-              <button
+            <div 
+              className="hidden sm:flex items-center space-x-1 text-gray-400"
+              onClick={(e) => e.stopPropagation()} // Stop event propagation at container level
+            >
+              <button 
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering expand
-                  toggleVolume();
+                  toggleMute(e);
                 }}
-                className="text-white p-1 rounded-full hover:bg-gray-700 transition-colors flex items-center justify-center"
-                aria-label={volume > 0 ? "Mute" : "Unmute"}
+                className="hover:text-white p-1.5 rounded-full transition-colors touch-manipulation flex items-center justify-center"
+                aria-label={volume ? "Mute" : "Unmute"}
+              >
+                {volume === 0 ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
+                  </svg>
+                ) : volume < 0.5 ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
+                  </svg>
+                )}
+              </button>
+              
+              {/* Volume Slider */}
+              <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={volume}
+                  onChange={(e) => {
+                    e.stopPropagation(); // Explicitly stop propagation
+                    handleVolumeChange(e);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
+                  className="w-14 sm:w-16 appearance-none cursor-pointer bg-gray-500 h-1 rounded-full"
+                  style={{
+                    background: `linear-gradient(to right, white ${volume * 100}%, gray ${volume * 100}%)`,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Mobile Volume Control - only visible when icon is clicked */}
+            <div className="relative sm:hidden" ref={volumeRef} onClick={(e) => e.stopPropagation()}>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent triggering expand
+                  toggleVolume(e);
+                }}
+                className="text-white p-1 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center"
+                aria-label={volume > 0 ? "Adjust volume" : "Unmute"}
               >
                 {volume > 0 ? (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -353,7 +425,6 @@ export default function NowPlayingBar({
                   </svg>
                 )}
               </button>
-              
               <div 
                 className={`absolute bottom-10 right-0 bg-gray-800 p-2 rounded shadow-lg transition-opacity ${
                   isVolumeOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
@@ -366,56 +437,24 @@ export default function NowPlayingBar({
                   max="1"
                   step="0.01"
                   value={volume}
-                  onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
+                  onChange={(e) => {
+                    e.stopPropagation(); // Explicitly stop propagation
+                    handleVolumeChange(e);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
                   className="w-24 cursor-pointer touch-manipulation"
                   aria-label="Volume"
                   style={{height: '20px'}}
                 />
               </div>
             </div>
-            
-            {/* Mobile volume slider - appears as a bottom sheet on volume click */}
-            <div 
-              className={`fixed bottom-0 left-0 right-0 bg-gray-900/95 p-4 rounded-t-xl shadow-lg transition-transform duration-300 transform sm:hidden ${
-                isVolumeOpen ? 'translate-y-0' : 'translate-y-full pointer-events-none'
-              }`}
-              onClick={(e) => e.stopPropagation()} // Prevent volume click from expanding
-            >
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium">Volume</span>
-                <button 
-                  onClick={() => setIsVolumeOpen(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              <div className="flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
-                </svg>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={volume}
-                  onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-                  className="w-full cursor-pointer touch-manipulation"
-                  aria-label="Volume"
-                  style={{height: '30px'}}
-                />
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
-                </svg>
-              </div>
-            </div>
-            
           </div>
         </div>
       </motion.div>
     </AnimatePresence>
   );
-} 
+}
+
+export default NowPlayingBar; 

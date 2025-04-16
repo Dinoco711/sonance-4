@@ -11,6 +11,7 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
   const [volume, setVolume] = useState(0.7);
   const [recentlyPlayed, setRecentlyPlayed] = useState<number[]>([]);
   const internalAudioRef = useRef<HTMLAudioElement | null>(null);
+  const animationRef = useRef<number | null>(null);
   
   // Use the external audio ref if provided, otherwise use the internal one
   const audioRef = externalAudioRef || internalAudioRef;
@@ -22,6 +23,14 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
       setDuration(audioRef.current.duration);
     }
   }, [audioRef]);
+
+  // More precise progress update using requestAnimationFrame
+  const updateProgress = useCallback(() => {
+    if (audioRef.current && isPlaying) {
+      setProgress(audioRef.current.currentTime);
+      animationRef.current = requestAnimationFrame(updateProgress);
+    }
+  }, [audioRef, isPlaying]);
 
   useEffect(() => {
     // Initialize audio element
@@ -68,11 +77,26 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.play().catch(err => console.error('Error playing audio:', err));
+        // Start the animation frame loop when playing
+        animationRef.current = requestAnimationFrame(updateProgress);
       } else {
         audioRef.current.pause();
+        // Cancel the animation frame when paused
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
       }
     }
-  }, [audioRef, isPlaying]);
+    
+    // Clean up animation frame on unmount
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+  }, [audioRef, isPlaying, updateProgress]);
 
   useEffect(() => {
     // Handle volume changes
@@ -84,6 +108,19 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
   const handlePlayPause = useCallback(() => {
     setIsPlaying(!isPlaying);
   }, [isPlaying]);
+
+  // Define addToRecentlyPlayed before it's used in dependencies
+  const addToRecentlyPlayed = useCallback((song: Song) => {
+    const index = songs.findIndex(s => s.id === song.id);
+    if (index !== -1) {
+      setRecentlyPlayed(prev => {
+        // Remove the song if it already exists in the array
+        const filtered = prev.filter(songIndex => songIndex !== index);
+        // Add the song to the beginning of the array and limit to 10 items
+        return [index, ...filtered].slice(0, 10);
+      });
+    }
+  }, [songs]);
 
   const handleNext = useCallback(() => {
     if (currentSongIndex === null) return;
@@ -101,7 +138,7 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
       return newIndex;
     });
     setIsPlaying(true);
-  }, [currentSongIndex, songs]);
+  }, [currentSongIndex, songs, addToRecentlyPlayed]);
 
   const handlePrevious = useCallback(() => {
     if (currentSongIndex === null) return;
@@ -119,30 +156,40 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
       return newIndex;
     });
     setIsPlaying(true);
-  }, [currentSongIndex, songs]);
+  }, [currentSongIndex, songs, addToRecentlyPlayed]);
 
   const handleProgressChange = useCallback((time: number) => {
-    setProgress(time);
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
+    // Validate that time is a finite, non-negative number before setting it
+    if (isFinite(time) && time >= 0) {
+      setProgress(time);
+      if (audioRef.current) {
+        // Ensure we don't exceed the audio duration
+        const safeTime = Math.min(time, audioRef.current.duration || 0);
+        audioRef.current.currentTime = safeTime;
+      }
+    } else {
+      console.warn('Invalid time value provided to handleProgressChange:', time);
     }
   }, [audioRef]);
 
   const handleVolumeChange = useCallback((newVolume: number) => {
+    // Update volume state without affecting playback position
     setVolume(newVolume);
-  }, []);
-
-  const addToRecentlyPlayed = useCallback((song: Song) => {
-    const index = songs.findIndex(s => s.id === song.id);
-    if (index !== -1) {
-      setRecentlyPlayed(prev => {
-        // Remove the song if it already exists in the array
-        const filtered = prev.filter(songIndex => songIndex !== index);
-        // Add the song to the beginning of the array and limit to 10 items
-        return [index, ...filtered].slice(0, 10);
-      });
+    if (audioRef.current) {
+      // Store current playback state and position
+      const wasPlaying = !audioRef.current.paused;
+      const currentTime = audioRef.current.currentTime;
+      
+      // Just update the volume without affecting playback
+      audioRef.current.volume = newVolume;
+      
+      // Ensure playback continues from the same position if it was playing
+      if (wasPlaying && audioRef.current.paused) {
+        audioRef.current.currentTime = currentTime;
+        audioRef.current.play().catch(err => console.error('Error resuming after volume change:', err));
+      }
     }
-  }, [songs]);
+  }, [audioRef]);
 
   const handleSongSelect = useCallback((index: number) => {
     setCurrentSongIndex(index);

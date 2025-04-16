@@ -4,7 +4,6 @@ import { songs } from '../data/songs';
 
 interface PodcastsPageProps {
   onClose: () => void;
-  onSongSelect: (index: number) => void;
 }
 
 // For demo, create some podcast data
@@ -72,7 +71,7 @@ const podcasts = [
 ];
 
 // Generate episodes using song data for demo purposes
-const generateEpisodes = (podcastId: number) => {
+const generateEpisodes = () => {
   return songs.slice(0, 10).map((song, idx) => ({
     id: idx + 1,
     title: `${song.title} - Discussion`,
@@ -83,7 +82,7 @@ const generateEpisodes = (podcastId: number) => {
   }));
 };
 
-const PodcastsPage: React.FC<PodcastsPageProps> = ({ onClose, onSongSelect }) => {
+const PodcastsPage: React.FC<PodcastsPageProps> = ({ onClose }) => {
   const [selectedTab, setSelectedTab] = useState<'shows' | 'episodes' | 'downloads'>('shows');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedPodcast, setSelectedPodcast] = useState<number | null>(null);
@@ -263,7 +262,7 @@ const PodcastsPage: React.FC<PodcastsPageProps> = ({ onClose, onSongSelect }) =>
               <div className="flex-1">
                 <h3 className="font-semibold text-lg mb-4">All Episodes</h3>
                 <div className="bg-white rounded-xl shadow-sm overflow-hidden divide-y divide-neutral-100">
-                  {generateEpisodes(currentPodcast.id).map((episode) => (
+                  {generateEpisodes().map((episode) => (
                     <div 
                       key={episode.id} 
                       className="p-4 hover:bg-neutral-50 transition-colors"
@@ -398,7 +397,7 @@ const PodcastsPage: React.FC<PodcastsPageProps> = ({ onClose, onSongSelect }) =>
                 <h2 className="text-xl font-semibold mb-5">New Episodes</h2>
                 <div className="bg-white rounded-xl shadow-sm overflow-hidden divide-y divide-neutral-100">
                   {podcasts.flatMap(podcast => 
-                    generateEpisodes(podcast.id).slice(0, 2).map(episode => ({
+                    generateEpisodes().slice(0, 2).map(episode => ({
                       ...episode,
                       podcast
                     }))
@@ -457,7 +456,7 @@ const PodcastsPage: React.FC<PodcastsPageProps> = ({ onClose, onSongSelect }) =>
                   </svg>
                 </div>
                 <h3 className="text-lg font-medium mb-2">No downloads yet</h3>
-                <p className="text-neutral-500 mb-6 max-w-md mx-auto">Download episodes to listen offline. They'll appear here.</p>
+                <p className="text-neutral-500 mb-6 max-w-md mx-auto">Download episodes to listen offline. They&apos;ll appear here.</p>
                 <button className="px-6 py-2.5 bg-purple-700 text-white rounded-full font-medium hover:bg-purple-800 transition-colors">
                   Browse podcasts
                 </button>

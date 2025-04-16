@@ -54,6 +54,7 @@ export const VolumeControl: React.FC<VolumeControlProps> = ({
   }, []);
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation(); // Stop event propagation
     const newVolume = parseFloat(e.target.value);
     onChange(newVolume);
     
@@ -69,6 +70,8 @@ export const VolumeControl: React.FC<VolumeControlProps> = ({
   };
 
   const handleVolumeTouch = (e: React.TouchEvent<HTMLInputElement>) => {
+    e.stopPropagation(); // Stop event propagation
+    
     // Calculate volume based on touch position
     const slider = volumeSliderRef.current;
     if (slider) {
@@ -91,7 +94,9 @@ export const VolumeControl: React.FC<VolumeControlProps> = ({
     }
   };
 
-  const toggleMute = () => {
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Stop event propagation
+    
     if (isMuted) {
       setIsMuted(false);
       onChange(previousVolume);
@@ -102,7 +107,9 @@ export const VolumeControl: React.FC<VolumeControlProps> = ({
     }
   };
 
-  const toggleVolumeSlider = () => {
+  const toggleVolumeSlider = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Stop event propagation
+    
     // On mobile, we use the click to toggle the volume slider
     if (isMobile) {
       setShowVolumeSlider(!showVolumeSlider);
@@ -132,12 +139,32 @@ export const VolumeControl: React.FC<VolumeControlProps> = ({
   };
 
   return (
-    <div className={`relative ${className}`} ref={volumeControlRef}>
+    <div 
+      className={`relative ${className}`} 
+      ref={volumeControlRef}
+      onClick={(e) => e.stopPropagation()} // Stop event propagation at the container level
+      onMouseDown={(e) => e.stopPropagation()}
+      onMouseUp={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+      onTouchEnd={(e) => e.stopPropagation()}
+    >
       <button
         type="button"
         className="text-white focus:outline-none p-2 transition-transform hover:scale-110 active:scale-95 touch-manipulation"
-        onClick={isMobile ? toggleVolumeSlider : toggleMute}
-        onMouseEnter={() => !isMobile && setShowVolumeSlider(true)}
+        onClick={(e) => {
+          e.stopPropagation(); // Stop event propagation
+          if (isMobile) {
+            toggleVolumeSlider(e);
+          } else {
+            toggleMute(e);
+          }
+        }}
+        onMouseDown={(e) => e.stopPropagation()}
+        onMouseUp={(e) => e.stopPropagation()}
+        onMouseEnter={(e) => {
+          e.stopPropagation(); // Stop event propagation
+          if (!isMobile) setShowVolumeSlider(true);
+        }}
         aria-label={isMuted ? "Unmute" : "Mute"}
       >
         {getVolumeIcon()}
@@ -146,7 +173,13 @@ export const VolumeControl: React.FC<VolumeControlProps> = ({
       {showVolumeSlider && (
         <div 
           className={`absolute ${isMobile ? 'bottom-12 left-1/2 transform -translate-x-1/2' : 'bottom-0 left-0'} z-10`}
-          onMouseLeave={() => !isMobile && setShowVolumeSlider(false)}
+          onClick={(e) => e.stopPropagation()} // Stop event propagation
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onMouseLeave={(e) => {
+            e.stopPropagation(); // Stop event propagation
+            if (!isMobile) setShowVolumeSlider(false);
+          }}
         >
           <div className={`bg-gray-800 p-3 rounded-lg shadow-lg ${isMobile ? 'w-40' : 'w-32'}`}>
             <input
@@ -158,13 +191,21 @@ export const VolumeControl: React.FC<VolumeControlProps> = ({
               value={isMuted ? 0 : volume}
               onChange={handleVolumeChange}
               onTouchMove={handleVolumeTouch}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
               className="w-full h-1.5 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-pink-500 touch-manipulation"
               aria-label="Volume"
+              onClick={(e) => e.stopPropagation()} // Stop event propagation
             />
             {isMobile && (
               <div className="flex justify-between mt-2">
                 <button
-                  onClick={toggleMute}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Stop event propagation
+                    toggleMute(e);
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
                   className="text-white text-xs p-1"
                 >
                   {isMuted ? "Unmute" : "Mute"}

@@ -3,7 +3,6 @@
 import { useState, useCallback, memo, ReactNode, useRef, useEffect } from 'react';
 import { songs } from './data/songs';
 import { useMusicPlayer } from './hooks/useMusicPlayer';
-import MusicCard from './components/MusicCard';
 import NowPlayingBar from './components/NowPlayingBar';
 import ExpandedSongCard from './components/ExpandedSongCard';
 import GenrePage from './components/GenrePage';
@@ -14,9 +13,9 @@ import AlbumsPage from './components/AlbumsPage';
 import PodcastsPage from './components/PodcastsPage';
 import AudiobooksPage from './components/AudiobooksPage';
 import ArtistsPage from './components/ArtistsPage';
+import Image from 'next/image';
 
 // Memoize components to prevent unnecessary re-renders
-const MemoizedMusicCard = memo(MusicCard);
 const MemoizedNowPlayingBar = memo(NowPlayingBar);
 
 // Type definitions for NavItem props
@@ -45,8 +44,12 @@ function NavItem({
     <div className="mb-1 transition-transform duration-500 ease-in-out" style={{ transitionDelay: `${delay}ms` }}>
       <button 
         className={`flex items-center justify-between w-full px-2.5 py-2 rounded-xl hover:bg-white/10 transition-colors text-left ${isActive ? 'bg-white/5' : ''}`}
-        onClick={onClick}
+        onClick={(e) => {
+          console.log(`NavItem clicked: ${label}`);
+          onClick(e);
+        }}
         aria-expanded={isDropdown ? isActive : undefined}
+        aria-label={label}
       >
         <div className="flex items-center min-w-0">
           <div className="w-7 h-7 flex items-center justify-center flex-shrink-0 text-gray-200">
@@ -76,11 +79,9 @@ export default function Home() {
   
   const { 
     currentSongIndex,
-    setCurrentSongIndex,
     isPlaying,
     setIsPlaying,
     progress,
-    setProgress,
     duration,
     volume,
     recentlyPlayed,
@@ -226,104 +227,9 @@ export default function Home() {
     return suggestions;
   }, [currentSong]);
 
-  // Handle song selection with expanded view
-  const handleSongClick = useCallback((songIndex: number) => {
-    handleSongSelect(songIndex);
-    setShowExpandedCard(true);
-  }, [handleSongSelect, setShowExpandedCard]);
-
-  // Handle genre selection
-  const handleGenreClick = useCallback((genreName: string) => {
-    setSelectedGenre(genreName);
-    setSelectedPlaylist(null); // Close playlist page if open
-    resetOtherPages(['genre']); // Keep genre page open by adding it to except array
-  }, []);
-  
-  // Handle closing the genre page
-  const handleCloseGenrePage = useCallback(() => {
-    setSelectedGenre(null);
-  }, []);
-  
-  // Handle playlist selection
-  const handlePlaylistClick = useCallback((playlistName: string) => {
-    setSelectedPlaylist(playlistName);
-    setSelectedGenre(null); // Close genre page if open
-    resetOtherPages(['playlist']); // Keep playlist page open by adding it to except array
-  }, []);
-  
-  // Handle closing the playlist page
-  const handleClosePlaylistPage = useCallback(() => {
-    setSelectedPlaylist(null);
-  }, []);
-  
-  // Handle liked songs click
-  const handleLikedSongsClick = useCallback(() => {
-    setShowLikedSongs(true);
-    resetOtherPages(['likedSongs']);
-  }, []);
-  
-  // Handle closing liked songs page
-  const handleCloseLikedSongsPage = useCallback(() => {
-    setShowLikedSongs(false);
-  }, []);
-  
-  // Handle saves click
-  const handleSavesClick = useCallback(() => {
-    setShowSaves(true);
-    resetOtherPages(['saves']);
-  }, []);
-  
-  // Handle closing saves page
-  const handleCloseSavesPage = useCallback(() => {
-    setShowSaves(false);
-  }, []);
-  
-  // Handle albums click
-  const handleAlbumsClick = useCallback(() => {
-    setShowAlbums(true);
-    resetOtherPages(['albums']);
-  }, []);
-  
-  // Handle closing albums page
-  const handleCloseAlbumsPage = useCallback(() => {
-    setShowAlbums(false);
-  }, []);
-  
-  // Handle podcasts click
-  const handlePodcastsClick = useCallback(() => {
-    setShowPodcasts(true);
-    resetOtherPages(['podcasts']);
-  }, []);
-  
-  // Handle closing podcasts page
-  const handleClosePodcastsPage = useCallback(() => {
-    setShowPodcasts(false);
-  }, []);
-  
-  // Handle audiobooks click
-  const handleAudiobooksClick = useCallback(() => {
-    setShowAudiobooks(true);
-    resetOtherPages(['audiobooks']);
-  }, []);
-  
-  // Handle closing audiobooks page
-  const handleCloseAudiobooksPage = useCallback(() => {
-    setShowAudiobooks(false);
-  }, []);
-  
-  // Handle artists click
-  const handleArtistsClick = useCallback(() => {
-    setShowArtists(true);
-    resetOtherPages(['artists']);
-  }, []);
-  
-  // Handle closing artists page
-  const handleCloseArtistsPage = useCallback(() => {
-    setShowArtists(false);
-  }, []);
-  
   // Helper function to reset all page states except the specified ones
   const resetOtherPages = useCallback((except: string[] = []) => {
+    console.log('Resetting pages, except:', except);
     if (!except.includes('genre')) setSelectedGenre(null);
     if (!except.includes('playlist')) setSelectedPlaylist(null);
     if (!except.includes('likedSongs')) setShowLikedSongs(false);
@@ -334,18 +240,132 @@ export default function Home() {
     if (!except.includes('artists')) setShowArtists(false);
   }, []);
 
+  // Handle song selection with expanded view
+  const handleSongClick = useCallback((songIndex: number) => {
+    handleSongSelect(songIndex);
+    setShowExpandedCard(true);
+  }, [handleSongSelect]);
+
+  // Handle genre selection
+  const handleGenreClick = useCallback((genre: string, e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    setSelectedGenre(genre);
+    resetOtherPages(['genre']);
+  }, [resetOtherPages]);
+  
+  // Handle closing the genre page
+  const handleCloseGenrePage = useCallback(() => {
+    setSelectedGenre(null);
+  }, []);
+  
+  // Handle playlist selection
+  const handlePlaylistClick = useCallback((playlist: string) => {
+    setSelectedPlaylist(playlist);
+    resetOtherPages();
+  }, [resetOtherPages]);
+  
+  // Handle closing the playlist page
+  const handleClosePlaylistPage = useCallback(() => {
+    setSelectedPlaylist(null);
+  }, []);
+  
+  // Add event listener for custom navigation event
+  useEffect(() => {
+    const handleNavigateToPlaylist = (e: CustomEvent) => {
+      if (e.detail && e.detail.playlistName) {
+        setSelectedPlaylist(e.detail.playlistName);
+        resetOtherPages();
+      }
+    };
+    
+    window.addEventListener('navigate-to-playlist', handleNavigateToPlaylist as EventListener);
+    
+    return () => {
+      window.removeEventListener('navigate-to-playlist', handleNavigateToPlaylist as EventListener);
+    };
+  }, [resetOtherPages]);
+  
+  // Handle liked songs click
+  const handleLikedSongsClick = useCallback(() => {
+    console.log('Liked Songs clicked, setting showLikedSongs to true');
+    setShowLikedSongs(true);
+    resetOtherPages(['likedSongs']);
+  }, [resetOtherPages]);
+  
+  // Handle closing liked songs page
+  const handleCloseLikedSongsPage = useCallback(() => {
+    setShowLikedSongs(false);
+  }, []);
+  
+  // Handle saves click
+  const handleSavesClick = useCallback(() => {
+    setShowSaves(true);
+    resetOtherPages(['saves']);
+  }, [resetOtherPages]);
+  
+  // Handle closing saves page
+  const handleCloseSavesPage = useCallback(() => {
+    setShowSaves(false);
+  }, []);
+  
+  // Handle albums click
+  const handleAlbumsClick = useCallback(() => {
+    setShowAlbums(true);
+    resetOtherPages(['albums']);
+  }, [resetOtherPages]);
+  
+  // Handle closing albums page
+  const handleCloseAlbumsPage = useCallback(() => {
+    setShowAlbums(false);
+  }, []);
+  
+  // Handle podcasts click
+  const handlePodcastsClick = useCallback(() => {
+    setShowPodcasts(true);
+    resetOtherPages(['podcasts']);
+  }, [resetOtherPages]);
+  
+  // Handle closing podcasts page
+  const handleClosePodcastsPage = useCallback(() => {
+    setShowPodcasts(false);
+  }, []);
+  
+  // Handle audiobooks click
+  const handleAudiobooksClick = useCallback(() => {
+    setShowAudiobooks(true);
+    resetOtherPages(['audiobooks']);
+  }, [resetOtherPages]);
+  
+  // Handle closing audiobooks page
+  const handleCloseAudiobooksPage = useCallback(() => {
+    setShowAudiobooks(false);
+  }, []);
+  
+  // Handle artists click
+  const handleArtistsClick = useCallback(() => {
+    setShowArtists(true);
+    resetOtherPages(['artists']);
+  }, [resetOtherPages]);
+  
+  // Handle closing artists page
+  const handleCloseArtistsPage = useCallback(() => {
+    setShowArtists(false);
+  }, []);
+
   // Memoize the sections to prevent unnecessary re-renders
   const renderNewReleases = useCallback(() => (
     <section className="mb-8">
       <h2 className="text-xl font-semibold mb-5 text-gray-800">New Releases</h2>
       <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-        {songs.slice(0, 6).map((song, index) => (
+        {songs.slice(0, 6).map((song) => (
           <div key={song.id} className="flex-shrink-0 w-[170px]" onClick={() => handleSongClick(song.id - 1)}>
             <div className="rounded-xl overflow-hidden bg-gray-50 p-3 shadow-sm hover:shadow-md transition-all cursor-pointer hover-card-animation">
               <div className="w-full aspect-square rounded-lg overflow-hidden mb-3">
-                <img 
+                <Image 
                   src={song.cover} 
                   alt={`${song.title} by ${song.artist}`}
+                  width={170}
+                  height={170}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
@@ -374,9 +394,11 @@ export default function Home() {
               <div key={`recent-${song.id}`} className="flex-shrink-0 w-[170px]" onClick={() => handleSongClick(songIndex)}>
                 <div className="rounded-xl overflow-hidden bg-gray-50 p-3 shadow-sm hover:shadow-md transition-all cursor-pointer hover-card-animation">
                   <div className="w-full aspect-square rounded-lg overflow-hidden mb-3">
-                    <img 
+                    <Image 
                       src={song.cover} 
                       alt={`${song.title} by ${song.artist}`}
+                      width={170}
+                      height={170}
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
@@ -390,7 +412,7 @@ export default function Home() {
         </div>
       </section>
     );
-  }, [recentlyPlayed, songs, handleSongClick]);
+  }, [recentlyPlayed, handleSongClick]);
 
   // Add these handler functions
   const handleShuffleToggle = (shuffleOn: boolean) => {
@@ -404,11 +426,13 @@ export default function Home() {
   // Add audio ended event listener to handle repeat and shuffle modes
   useEffect(() => {
     if (audioRef.current && currentSong) {
+      const audio = audioRef.current;
+      
       const handleEnded = () => {
         if (repeatMode === 2) {
           // Repeat one: replay the same song
-          audioRef.current!.currentTime = 0;
-          audioRef.current!.play().catch(err => console.error("Error playing audio:", err));
+          audio.currentTime = 0;
+          audio.play().catch(err => console.error("Error playing audio:", err));
         } else if (repeatMode === 1 || isShuffleOn) {
           // Repeat all or shuffle: go to next song
           if (isShuffleOn) {
@@ -429,13 +453,13 @@ export default function Home() {
         }
       };
       
-      audioRef.current.addEventListener('ended', handleEnded);
+      audio.addEventListener('ended', handleEnded);
       
       return () => {
-        audioRef.current?.removeEventListener('ended', handleEnded);
+        audio.removeEventListener('ended', handleEnded);
       };
     }
-  }, [audioRef, currentSong, currentSongIndex, repeatMode, isShuffleOn, songs.length, nextSong, handleSongSelect, setIsPlaying, addToRecentlyPlayed]);
+  }, [audioRef, currentSong, currentSongIndex, repeatMode, isShuffleOn, nextSong, handleSongSelect, setIsPlaying, addToRecentlyPlayed]);
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-50 p-1 sm:p-2 md:p-3">
@@ -453,7 +477,8 @@ export default function Home() {
           <button 
             className="w-10 h-10 bg-white text-gray-900 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-gray-200 transition-all cursor-pointer" 
             aria-label="Home"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               resetOtherPages();
               if (window.innerWidth < 640) { // sm breakpoint in Tailwind
                 setIsSidebarVisible(false);
@@ -477,7 +502,10 @@ export default function Home() {
               </svg>
             }
             label="Playlists"
-            onClick={() => toggleDropdown('playlists')}
+            onClick={(e) => {
+              e.preventDefault();
+              toggleDropdown('playlists');
+            }}
             isDropdown
             isActive={openDropdown === 'playlists'}
             delay={100}
@@ -536,7 +564,8 @@ export default function Home() {
               </svg>
             }
             label="Liked Songs"
-            onClick={() => {
+            onClick={(e) => {
+              if (e) e.preventDefault();
               handleLikedSongsClick();
               if (window.innerWidth < 640) { // sm breakpoint in Tailwind
                 setIsSidebarVisible(false);
@@ -554,7 +583,8 @@ export default function Home() {
             }
             label="Saves"
             delay={200}
-            onClick={() => {
+            onClick={(e) => {
+              if (e) e.preventDefault();
               handleSavesClick();
               if (window.innerWidth < 640) { // sm breakpoint in Tailwind
                 setIsSidebarVisible(false);
@@ -571,7 +601,8 @@ export default function Home() {
             }
             label="Albums"
             delay={250}
-            onClick={() => {
+            onClick={(e) => {
+              if (e) e.preventDefault();
               handleAlbumsClick();
               if (window.innerWidth < 640) { // sm breakpoint in Tailwind
                 setIsSidebarVisible(false);
@@ -588,7 +619,8 @@ export default function Home() {
             }
             label="Podcasts"
             delay={350}
-            onClick={() => {
+            onClick={(e) => {
+              if (e) e.preventDefault();
               handlePodcastsClick();
               if (window.innerWidth < 640) { // sm breakpoint in Tailwind
                 setIsSidebarVisible(false);
@@ -605,7 +637,8 @@ export default function Home() {
             }
             label="Audiobooks"
             delay={400}
-            onClick={() => {
+            onClick={(e) => {
+              if (e) e.preventDefault();
               handleAudiobooksClick();
               if (window.innerWidth < 640) { // sm breakpoint in Tailwind
                 setIsSidebarVisible(false);
@@ -622,7 +655,8 @@ export default function Home() {
             }
             label="Artists"
             delay={450}
-            onClick={() => {
+            onClick={(e) => {
+              if (e) e.preventDefault();
               handleArtistsClick();
               if (window.innerWidth < 640) { // sm breakpoint in Tailwind
                 setIsSidebarVisible(false);
@@ -872,7 +906,10 @@ export default function Home() {
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
                     <div 
                       className="bg-gray-50 p-4 rounded-2xl shadow-sm hover:shadow-md cursor-pointer hover-card-animation"
-                      onClick={() => handlePlaylistClick("Top Hits 2024")}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePlaylistClick("Top Hits 2024");
+                      }}
                     >
                       <div className="w-full aspect-square rounded-xl overflow-hidden mb-3 shadow-sm bg-gradient-to-br from-purple-400 to-pink-500"></div>
                       <h3 className="font-medium text-sm mb-1 truncate text-gray-800">Top Hits 2024</h3>
@@ -880,7 +917,10 @@ export default function Home() {
                     </div>
                     <div 
                       className="bg-gray-50 p-4 rounded-2xl shadow-sm hover:shadow-md cursor-pointer hover-card-animation"
-                      onClick={() => handlePlaylistClick("Chill Vibes")}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePlaylistClick("Chill Vibes");
+                      }}
                     >
                       <div className="w-full aspect-square rounded-xl overflow-hidden mb-3 shadow-sm bg-gradient-to-br from-blue-400 to-teal-500"></div>
                       <h3 className="font-medium text-sm mb-1 truncate text-gray-800">Chill Vibes</h3>
@@ -888,7 +928,10 @@ export default function Home() {
                     </div>
                     <div 
                       className="bg-gray-50 p-4 rounded-2xl shadow-sm hover:shadow-md cursor-pointer hover-card-animation"
-                      onClick={() => handlePlaylistClick("Party Mix")}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePlaylistClick("Party Mix");
+                      }}
                     >
                       <div className="w-full aspect-square rounded-xl overflow-hidden mb-3 shadow-sm bg-gradient-to-br from-amber-400 to-red-500"></div>
                       <h3 className="font-medium text-sm mb-1 truncate text-gray-800">Party Mix</h3>
@@ -907,7 +950,7 @@ export default function Home() {
                             <span className="bg-blue-50 text-blue-600 text-xs px-2 sm:px-3 py-1 rounded-full font-medium">Featured artist</span>
                           </div>
                           <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2 sm:mb-3 text-gray-800">{currentSong?.artist || "Featured Artist"}</h2>
-                          <p className="text-gray-600 mb-4 sm:mb-8 text-xs sm:text-sm">Trending with "{currentSong?.title}"</p>
+                          <p className="text-gray-600 mb-4 sm:mb-8 text-xs sm:text-sm">Trending with &quot;{currentSong?.title}&quot;</p>
                         </div>
                         <div className="flex items-center gap-2 sm:gap-4">
                           <button 
@@ -947,9 +990,11 @@ export default function Home() {
                     </div>
                     <div className="md:w-2/5 w-full relative overflow-hidden md:h-auto bg-gray-100">
                       {currentSong?.cover ? (
-                        <img 
+                        <Image 
                           src={currentSong.cover} 
                           alt={`${currentSong.artist} cover`} 
+                          width={600}
+                          height={600}
                           className="w-full h-full object-cover aspect-square md:aspect-auto min-h-[200px] sm:min-h-[300px]"
                           loading="lazy"
                         />
@@ -974,7 +1019,7 @@ export default function Home() {
                         >
                           <div className="mr-3 sm:mr-5 text-neutral-400 w-4 sm:w-5 text-center font-medium text-xs sm:text-sm">{index + 1}</div>
                           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-md overflow-hidden mr-2 sm:mr-4 flex-shrink-0">
-                            <img src={song.cover} alt={song.title} className="w-full h-full object-cover" loading="lazy" />
+                            <Image src={song.cover} alt={song.title} width={48} height={48} className="w-full h-full object-cover" loading="lazy" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <h3 className="font-medium mb-0.5 sm:mb-1 text-sm sm:text-base truncate text-gray-800">{song.title}</h3>
@@ -1023,7 +1068,7 @@ export default function Home() {
                             onClick={() => handleSongClick(song.id - 1)}
                           >
                             <div className="w-full aspect-square rounded-xl overflow-hidden mb-2 sm:mb-3 shadow-sm">
-                              <img src={song.cover} alt={song.title} className="w-full h-full object-cover" loading="lazy" />
+                              <Image src={song.cover} alt={song.title} width={200} height={200} className="w-full h-full object-cover" loading="lazy" />
                             </div>
                             <h3 className="font-medium text-xs sm:text-sm mb-0.5 sm:mb-1 truncate text-gray-800">{song.title}</h3>
                             <p className="text-xs text-neutral-500 truncate">{song.artist}</p>
@@ -1039,6 +1084,9 @@ export default function Home() {
                         <button 
                           className="text-neutral-700 hover:text-neutral-900 transition-colors"
                           aria-label="View all genres"
+                          onClick={(e) => {
+                            e.preventDefault();
+                          }}
                         >
                           <span className="hidden md:inline-flex items-center text-sm font-medium">
                             View All
@@ -1063,7 +1111,10 @@ export default function Home() {
                           <div 
                             key={index} 
                             className="bg-gray-50 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden relative h-24 sm:h-36 group"
-                            onClick={() => handleGenreClick(genre.name)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleGenreClick(genre.name);
+                            }}
                           >
                             <div className={`absolute inset-0 ${genre.color} opacity-30 group-hover:opacity-50 transition-opacity duration-300`}></div>
                             <div className="absolute bottom-3 sm:bottom-5 left-3 sm:left-5">
@@ -1102,7 +1153,7 @@ export default function Home() {
                             onClick={() => handleSongClick(song.id - 1)}
                           >
                             <div className="w-full aspect-square rounded-xl overflow-hidden mb-2 sm:mb-3 shadow-sm">
-                              <img src={song.cover} alt={song.title} className="w-full h-full object-cover" loading="lazy" />
+                              <Image src={song.cover} alt={song.title} width={200} height={200} className="w-full h-full object-cover" loading="lazy" />
                             </div>
                             <h3 className="font-medium text-xs sm:text-sm mb-0.5 sm:mb-1 truncate text-gray-800">{song.title}</h3>
                             <p className="text-xs text-neutral-500 truncate">{song.artist}</p>
@@ -1143,7 +1194,11 @@ export default function Home() {
           progress={progress}
           duration={duration}
           volume={volume}
-          progressPercentage={(progress / duration) * 100}
+          progressPercentage={
+            isFinite(progress) && isFinite(duration) && duration > 0 
+              ? Math.max(0, Math.min(100, (progress / duration) * 100)) 
+              : 0
+          }
           suggestedSongs={getSuggestedSongs()}
           onPlayPause={handlePlayPause}
           onNext={nextSong}

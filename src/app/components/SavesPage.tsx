@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import Image from 'next/image';
 import { songs } from '../data/songs';
 
 interface SavesPageProps {
@@ -126,11 +129,12 @@ const SavesPage: React.FC<SavesPageProps> = ({ onClose, onSongSelect }) => {
                   <div className={`w-full overflow-hidden mb-3 shadow-sm ${
                     item.type === 'artist' ? 'aspect-square rounded-full' : 'aspect-square rounded-lg'
                   }`}>
-                    <img 
+                    <Image 
                       src={item.image} 
                       alt={item.name}
                       className="w-full h-full object-cover"
-                      loading="lazy"
+                      width={100}
+                      height={100}
                     />
                   </div>
                   <h3 className="font-medium text-sm mb-1 truncate text-gray-800">{item.name}</h3>

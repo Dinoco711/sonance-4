@@ -235,10 +235,9 @@ function PlaylistPage({ playlistName, onClose, onSongSelect }: PlaylistPageProps
                         className="bg-gray-50 p-5 rounded-2xl shadow-sm hover:shadow-md cursor-pointer transition-all"
                         onClick={() => {
                           onClose();
-                          // In a real implementation, we would navigate to the selected playlist
                           setTimeout(() => {
-                            // This would be replaced with proper navigation in a real app
-                            alert(`Would navigate to ${name} playlist`);
+                            onSongSelect(data.songIds[0] - 1);
+                            window.dispatchEvent(new CustomEvent('navigate-to-playlist', { detail: { playlistName: name } }));
                           }, 100);
                         }}
                       >

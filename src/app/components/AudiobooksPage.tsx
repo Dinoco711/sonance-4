@@ -1,8 +1,10 @@
+'use client';
+
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 interface AudiobooksPageProps {
   onClose: () => void;
-  onSongSelect: (index: number) => void;
 }
 
 // Sample audiobook data for demo
@@ -85,7 +87,7 @@ const categories = [
   { id: 6, name: "Biography", count: 38, color: "from-cyan-400 to-sky-500" }
 ];
 
-const AudiobooksPage: React.FC<AudiobooksPageProps> = ({ onClose, onSongSelect }) => {
+const AudiobooksPage: React.FC<AudiobooksPageProps> = ({ onClose }) => {
   const [selectedBook, setSelectedBook] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   
@@ -183,9 +185,11 @@ const AudiobooksPage: React.FC<AudiobooksPageProps> = ({ onClose, onSongSelect }
               <div className="w-full md:w-1/3 max-w-xs">
                 <div className="bg-white p-6 rounded-2xl shadow-md">
                   <div className="w-full aspect-[2/3] rounded-xl overflow-hidden shadow-lg mb-5">
-                    <img 
+                    <Image 
                       src={currentBook.cover}
                       alt={currentBook.title}
+                      width={300}
+                      height={450}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -250,9 +254,11 @@ const AudiobooksPage: React.FC<AudiobooksPageProps> = ({ onClose, onSongSelect }
                           onClick={() => setSelectedBook(book.id)}
                         >
                           <div className="flex">
-                            <img 
+                            <Image 
                               src={book.cover}
                               alt={book.title}
+                              width={64}
+                              height={96}
                               className="w-16 h-24 object-cover rounded-lg"
                             />
                             <div className="ml-3">
@@ -304,9 +310,11 @@ const AudiobooksPage: React.FC<AudiobooksPageProps> = ({ onClose, onSongSelect }
                   >
                     <div className="bg-white p-3 rounded-xl shadow-sm group-hover:shadow-md transition-all">
                       <div className="aspect-[2/3] rounded-lg overflow-hidden mb-3 shadow-sm relative">
-                        <img 
+                        <Image 
                           src={book.cover}
                           alt={book.title}
+                          width={300}
+                          height={450}
                           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
                         />
@@ -345,12 +353,13 @@ const AudiobooksPage: React.FC<AudiobooksPageProps> = ({ onClose, onSongSelect }
                     className="flex p-4 hover:bg-neutral-50 cursor-pointer transition-colors"
                     onClick={() => setSelectedBook(book.id)}
                   >
-                    <div className="w-12 h-16 rounded overflow-hidden mr-4 flex-shrink-0 shadow-sm">
-                      <img 
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-md overflow-hidden mr-3 sm:mr-4 flex-shrink-0">
+                      <Image 
                         src={book.cover}
                         alt={book.title}
+                        width={64}
+                        height={64}
                         className="w-full h-full object-cover"
-                        loading="lazy"
                       />
                     </div>
                     <div className="flex-1 min-w-0">

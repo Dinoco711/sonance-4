@@ -1,4 +1,7 @@
-import { useState, useEffect } from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { songs } from '../data/songs';
 
 interface GenrePageProps {
@@ -102,7 +105,7 @@ function GenrePage({ genreName, onClose, onSongSelect }: GenrePageProps) {
                     >
                       <div className="mr-5 text-neutral-400 w-5 text-center font-medium">{index + 1}</div>
                       <div className="w-14 h-14 rounded-md overflow-hidden mr-4 flex-shrink-0">
-                        <img src={song.cover} alt={song.title} className="w-full h-full object-cover" loading="lazy" />
+                        <Image src={song.cover} alt={song.title} className="w-full h-full object-cover" width={56} height={56} loading="lazy" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium mb-1 truncate text-gray-800">{song.title}</h3>
