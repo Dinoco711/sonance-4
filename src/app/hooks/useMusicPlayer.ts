@@ -176,18 +176,8 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
     // Update volume state without affecting playback position
     setVolume(newVolume);
     if (audioRef.current) {
-      // Store current playback state and position
-      const wasPlaying = !audioRef.current.paused;
-      const currentTime = audioRef.current.currentTime;
-      
-      // Just update the volume without affecting playback
+      // Simply update the volume property without any other changes to playback
       audioRef.current.volume = newVolume;
-      
-      // Ensure playback continues from the same position if it was playing
-      if (wasPlaying && audioRef.current.paused) {
-        audioRef.current.currentTime = currentTime;
-        audioRef.current.play().catch(err => console.error('Error resuming after volume change:', err));
-      }
     }
   }, [audioRef]);
 

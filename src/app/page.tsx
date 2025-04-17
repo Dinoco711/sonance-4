@@ -261,7 +261,7 @@ export default function Home() {
   // Handle playlist selection
   const handlePlaylistClick = useCallback((playlist: string) => {
     setSelectedPlaylist(playlist);
-    resetOtherPages();
+    resetOtherPages(['playlist']);
   }, [resetOtherPages]);
 
   // Handle closing the playlist page
@@ -274,7 +274,7 @@ export default function Home() {
     const handleNavigateToPlaylist = (e: CustomEvent) => {
       if (e.detail && e.detail.playlistName) {
         setSelectedPlaylist(e.detail.playlistName);
-        resetOtherPages();
+        resetOtherPages(['playlist']);
       }
     };
 
@@ -479,7 +479,7 @@ export default function Home() {
             aria-label="Home"
             onClick={(e) => {
               e.preventDefault();
-              resetOtherPages();
+              resetOtherPages([]);
               if (window.innerWidth < 640) { // sm breakpoint in Tailwind
                 setIsSidebarVisible(false);
               }
@@ -694,7 +694,7 @@ export default function Home() {
             </button>
             <h1
               className="text-2xl font-bold tracking-tight cursor-pointer hover:text-neutral-700 transition-colors text-gray-900 leading-tight flex items-center"
-              onClick={() => resetOtherPages()}
+              onClick={() => resetOtherPages([])}
               style={{
                 fontFamily: 'var(--font-geist-sans)',
                 letterSpacing: '-0.02em',

@@ -32,7 +32,7 @@ export const songs: Song[] = [
     title: "As It Was",
     artist: "Harry Styles",
     album: "Harry's House",
-    cover: "https://github.com/Dinoco711/sonance-assets/blob/main/cover/as-it-was.jpg?raw=true",
+    cover: "https://raw.githubusercontent.com/Dinoco711/sonance-assets/refs/heads/main/cover/as-it-was.jpg",
     audioSrc: "https://media.githubusercontent.com/media/Dinoco711/sonance-assets/refs/heads/main/songs/as-it-was.mp3",
     duration: "2:47"
   },
@@ -50,7 +50,7 @@ export const songs: Song[] = [
     title: "Pompeii",
     artist: "Bastille",
     album: "Bad Blood",
-    cover: "https://github.com/Dinoco711/sonance-assets/blob/main/cover/pompeii.jpg?raw=true",
+    cover: "/cover/pompeii.jpg",
     audioSrc: "https://media.githubusercontent.com/media/Dinoco711/sonance-assets/refs/heads/main/songs/pompeii.mp3",
     duration: "3:53"
   },
