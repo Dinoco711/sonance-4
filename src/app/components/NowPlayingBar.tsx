@@ -5,6 +5,7 @@ import type { Song } from '../data/songs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { slideUpVariants } from '../utils/transitions';
 import Image from 'next/image';
+import { VolumeControl } from './VolumeControl';
 
 interface NowPlayingBarProps {
   currentSong: Song;
@@ -35,36 +36,13 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
 }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [isVolumeOpen, setIsVolumeOpen] = useState(false);
-  const [previousVolume, setPreviousVolume] = useState(volume);
   const [isShuffleOn, setIsShuffleOn] = useState(false);
   const [repeatMode, setRepeatMode] = useState(0); // 0: off, 1: repeat all, 2: repeat one
-  const volumeRef = useRef<HTMLDivElement>(null);
 
   // Calculate progress percentage once to avoid recalculations during render
   const progressPercentage = useMemo(() => {
     return ((progress || 0) / (duration || 1)) * 100;
   }, [progress, duration]);
-
-  // Track previous volume for mute/unmute functionality
-  useEffect(() => {
-    if (volume > 0) {
-      setPreviousVolume(volume);
-    }
-  }, [volume]);
-
-  // Handle clicks outside the volume control
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (volumeRef.current && !volumeRef.current.contains(event.target as Node)) {
-        setIsVolumeOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   const formatTime = (time: number) => {
     if (isNaN(time)) return "0:00";
@@ -81,28 +59,6 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
     } else {
       console.warn('Invalid time value in progress change:', newTime);
     }
-  };
-
-  const toggleVolume = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering expand
-    // On mobile, we just want to show/hide the volume panel without toggling mute
-    setIsVolumeOpen(!isVolumeOpen);
-  };
-
-  const toggleMute = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering expand
-    if (volume > 0) {
-      onVolumeChange(0);
-    } else {
-      onVolumeChange(previousVolume);
-    }
-  };
-
-  // Volume slider event handler
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation(); // Stop event propagation
-    const newVolume = parseFloat(e.target.value);
-    onVolumeChange(newVolume);
   };
 
   if (!currentSong) return null;
@@ -293,42 +249,22 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
           </motion.div>
 
           {/* Volume Control and additional buttons */}
-          <div className="w-1/4 sm:w-1/4 flex justify-end items-center">
-            {/* Mobile volume button - simplified for small screens */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent triggering expand
-                toggleMute(e);
-              }}
-              className="text-white p-1 rounded-full hover:bg-gray-700 transition-colors flex sm:hidden items-center justify-center"
-              aria-label={volume > 0 ? "Mute" : "Unmute"}
-            >
-              {volume > 0 ? (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6l4.72-4.72a.75.75 0 011.28.531V19.94a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.506-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.395C2.806 8.757 3.63 8.25 4.51 8.25H6.75z" />
-                </svg>
-              )}
-            </button>
-
+          <div className="w-1/4 sm:w-1/4 flex justify-end items-center space-x-1">
             {/* Like button - hidden on smallest screens */}
             <button
               onClick={(e) => {
                 e.stopPropagation(); // Prevent triggering expand
                 setIsLiked(!isLiked);
               }}
-              className="text-gray-400 hover:text-white transition-colors hover:bg-white/10 rounded-full p-1 mr-1 sm:mr-2 hidden sm:flex sm:items-center sm:justify-center"
+              className="text-gray-400 hover:text-white transition-colors hover:bg-white/10 rounded-full p-1.5 mr-0.5 hidden sm:flex sm:items-center sm:justify-center"
               aria-label={isLiked ? "Unlike song" : "Like song"}
             >
               {isLiked ? (
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-red-500">
                   <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                 </svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                 </svg>
               )}
@@ -340,114 +276,30 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                 e.stopPropagation(); // Prevent triggering expand
                 setIsSaved(!isSaved);
               }}
-              className="text-gray-400 hover:text-white transition-colors hover:bg-white/10 rounded-full p-1 mr-1 sm:mr-2 hidden md:flex md:items-center md:justify-center"
+              className="text-gray-400 hover:text-white transition-colors hover:bg-white/10 rounded-full p-1.5 mr-0.5 hidden md:flex md:items-center md:justify-center"
               aria-label={isSaved ? "Remove from library" : "Save to library"}
             >
               {isSaved ? (
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-green-400">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-green-400">
                   <path fillRule="evenodd" d="M6.32 2.577a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 0 1-1.085.67L12 18.089l-7.165 3.583A.75.75 0 0 1 3.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93Z" clipRule="evenodd" />
                 </svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
                 </svg>
               )}
             </button>
 
-            {/* Desktop Volume Control */}
-            <div
-              className="hidden sm:flex items-center space-x-1 text-gray-400"
-              onClick={(e) => e.stopPropagation()} // Stop event propagation at container level
+            {/* Volume Control for both desktop and mobile */}
+            <div 
+              className="flex items-center ml-0.5" 
+              onClick={(e) => e.stopPropagation()}
             >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering expand
-                  toggleMute(e);
-                }}
-                className="hover:text-white p-1.5 rounded-full transition-colors touch-manipulation flex items-center justify-center"
-                aria-label={volume ? "Mute" : "Unmute"}
-              >
-                {volume === 0 ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
-                  </svg>
-                ) : volume < 0.5 ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
-                  </svg>
-                )}
-              </button>
-
-              {/* Volume Slider */}
-              <div className="relative" onClick={(e) => e.stopPropagation()}>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={volume}
-                  onChange={(e) => {
-                    e.stopPropagation(); // Explicitly stop propagation
-                    handleVolumeChange(e);
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onTouchStart={(e) => e.stopPropagation()}
-                  className="w-14 sm:w-16 appearance-none cursor-pointer bg-gray-500 h-1 rounded-full"
-                  style={{
-                    background: `linear-gradient(to right, white ${volume * 100}%, gray ${volume * 100}%)`,
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Mobile Volume Control - only visible when icon is clicked */}
-            <div className="relative sm:hidden" ref={volumeRef} onClick={(e) => e.stopPropagation()}>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering expand
-                  toggleVolume(e);
-                }}
-                className="text-white p-1 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center"
-                aria-label={volume > 0 ? "Adjust volume" : "Unmute"}
-              >
-                {volume > 0 ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6l4.72-4.72a.75.75 0 011.28.531V19.94a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.506-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.395C2.806 8.757 3.63 8.25 4.51 8.25H6.75z" />
-                  </svg>
-                )}
-              </button>
-              <div
-                className={`absolute bottom-10 right-0 bg-gray-800 p-2 rounded shadow-lg transition-opacity ${isVolumeOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                  }`}
-                onClick={(e) => e.stopPropagation()} // Prevent volume click from expanding
-              >
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={volume}
-                  onChange={(e) => {
-                    e.stopPropagation(); // Explicitly stop propagation
-                    handleVolumeChange(e);
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onTouchStart={(e) => e.stopPropagation()}
-                  className="w-24 cursor-pointer touch-manipulation"
-                  aria-label="Volume"
-                  style={{ height: '20px' }}
-                />
-              </div>
+              <VolumeControl 
+                volume={volume} 
+                onChange={onVolumeChange}
+                className="text-zinc-400 hover:text-white"
+              />
             </div>
           </div>
         </div>

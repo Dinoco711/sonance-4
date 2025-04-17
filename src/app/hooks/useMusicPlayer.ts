@@ -173,11 +173,13 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
   }, [audioRef]);
 
   const handleVolumeChange = useCallback((newVolume: number) => {
-    // Update volume state without affecting playback position
-    setVolume(newVolume);
+    // Only update volume state without affecting any playback
+    const safeVolume = Math.max(0, Math.min(1, newVolume));
+    setVolume(safeVolume);
+    
+    // Simply set the volume property without touching any other audio properties
     if (audioRef.current) {
-      // Simply update the volume property without any other changes to playback
-      audioRef.current.volume = newVolume;
+      audioRef.current.volume = safeVolume;
     }
   }, [audioRef]);
 

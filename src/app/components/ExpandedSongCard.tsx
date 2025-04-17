@@ -123,7 +123,14 @@ export default function ExpandedSongCard({
   }, []);
 
   const handleVolumeChange = (newVolume: number) => {
-    onVolumeChange(newVolume);
+    // Ensure the volume is within valid range
+    const safeVolume = Math.max(0, Math.min(1, newVolume));
+    
+    // Only update if there's an actual change to avoid unnecessary re-renders
+    // and potential playback disruption
+    if (safeVolume !== volume) {
+      onVolumeChange(safeVolume);
+    }
   };
 
   const handleShuffleToggle = () => {
@@ -334,7 +341,7 @@ export default function ExpandedSongCard({
                 <VolumeControl 
                   volume={volume} 
                   onChange={handleVolumeChange}
-                  className="ml-2"
+                  className="ml-1 text-white/80 hover:text-white"
                 />
               </div>
               
