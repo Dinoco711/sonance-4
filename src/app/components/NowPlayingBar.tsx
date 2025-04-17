@@ -40,19 +40,19 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
   const [isShuffleOn, setIsShuffleOn] = useState(false);
   const [repeatMode, setRepeatMode] = useState(0); // 0: off, 1: repeat all, 2: repeat one
   const volumeRef = useRef<HTMLDivElement>(null);
-  
+
   // Calculate progress percentage once to avoid recalculations during render
   const progressPercentage = useMemo(() => {
     return ((progress || 0) / (duration || 1)) * 100;
   }, [progress, duration]);
-  
+
   // Track previous volume for mute/unmute functionality
   useEffect(() => {
     if (volume > 0) {
       setPreviousVolume(volume);
     }
   }, [volume]);
-  
+
   // Handle clicks outside the volume control
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -65,7 +65,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  
+
   const formatTime = (time: number) => {
     if (isNaN(time)) return "0:00";
     const minutes = Math.floor(time / 60);
@@ -82,7 +82,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
       console.warn('Invalid time value in progress change:', newTime);
     }
   };
-  
+
   const toggleVolume = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering expand
     // On mobile, we just want to show/hide the volume panel without toggling mute
@@ -109,7 +109,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
 
   return (
     <AnimatePresence>
-      <motion.div 
+      <motion.div
         className="bg-gray-900/90 backdrop-blur-md text-white rounded-xl px-1 sm:px-6 py-1 sm:py-3 border border-zinc-800/40 shadow-md w-full cursor-pointer hover:bg-gray-900/95 transition-colors"
         onClick={onExpand}
         variants={slideUpVariants}
@@ -119,19 +119,19 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
       >
         <div className="flex items-center justify-between">
           {/* Current Song Info */}
-          <motion.div 
+          <motion.div
             className="flex items-center w-1/4 sm:w-1/4"
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <motion.div 
+            <motion.div
               className="h-8 w-8 sm:h-12 sm:w-12 flex-shrink-0 mr-1 sm:mr-3 rounded-lg overflow-hidden"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              <Image 
-                src={currentSong.cover} 
+              <Image
+                src={currentSong.cover}
                 alt={`${currentSong.title} by ${currentSong.artist}`}
                 width={48}
                 height={48}
@@ -139,7 +139,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
               />
             </motion.div>
             <div className="flex-1 min-w-0 hidden sm:block">
-              <motion.p 
+              <motion.p
                 className="text-sm font-medium truncate"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -147,7 +147,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
               >
                 {currentSong.title}
               </motion.p>
-              <motion.p 
+              <motion.p
                 className="text-xs text-gray-400 truncate"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -158,7 +158,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
             </div>
             {/* Mobile song title - visible only on small screens */}
             <div className="flex-1 min-w-0 sm:hidden max-w-[80px]">
-              <motion.p 
+              <motion.p
                 className="text-xs font-medium truncate"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -166,7 +166,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
               >
                 {currentSong.title}
               </motion.p>
-              <motion.p 
+              <motion.p
                 className="text-[10px] text-gray-400 truncate"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -176,16 +176,16 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
               </motion.p>
             </div>
           </motion.div>
-          
+
           {/* Player Controls */}
-          <motion.div 
+          <motion.div
             className="flex flex-col items-center w-1/2 sm:w-2/4"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
             <div className="flex items-center justify-center gap-1 sm:gap-3 mb-0.5 sm:mb-1">
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering expand
                   setIsShuffleOn(!isShuffleOn);
@@ -197,8 +197,8 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3M9 12h6m-6 0a3 3 0 11-6 0 3 3 0 016 0zm6 0a3 3 0 110 6 3 3 0 010-6z" />
                 </svg>
               </button>
-              
-              <button 
+
+              <button
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering expand
                   onPrevious();
@@ -209,8 +209,8 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                   <path d="M9.195 18.44c1.25.713 2.805-.19 2.805-1.629v-2.34l6.945 3.968c1.25.714 2.805-.188 2.805-1.628V8.688c0-1.44-1.555-2.342-2.805-1.628L12 11.03v-2.34c0-1.44-1.555-2.343-2.805-1.629l-7.108 4.062c-1.26.72-1.26 2.536 0 3.256l7.108 4.061z" />
                 </svg>
               </button>
-              
-              <button 
+
+              <button
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering expand
                   onPlayPause();
@@ -227,8 +227,8 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                   </svg>
                 )}
               </button>
-              
-              <button 
+
+              <button
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering expand
                   onNext();
@@ -239,8 +239,8 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                   <path d="M5.055 7.06c-1.25-.714-2.805.189-2.805 1.628v8.123c0 1.44 1.555 2.342 2.805 1.628L12 14.471v2.34c0 1.44 1.555 2.342 2.805 1.628l7.108-4.061c1.26-.72 1.26-2.536 0-3.256L14.805 7.06C13.555 6.346 12 7.25 12 8.688v2.34L5.055 7.06z" />
                 </svg>
               </button>
-              
-              <button 
+
+              <button
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering expand
                   setRepeatMode((repeatMode + 1) % 3); // cycle through repeat modes
@@ -259,13 +259,13 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                 )}
               </button>
             </div>
-            
+
             {/* Progress Bar */}
             <div className="w-full flex items-center gap-1 sm:gap-2">
               <span className="text-[8px] sm:text-[10px] text-gray-400 xs:inline">{formatTime(progress)}</span>
               <div className="relative flex-grow" onClick={(e) => e.stopPropagation()}>
                 <div className="h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-white/80 rounded-full"
                     style={{ width: `${progressPercentage}%` }}
                   ></div>
@@ -291,7 +291,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
               <span className="text-[8px] sm:text-[10px] text-gray-400 xs:inline">{formatTime(duration)}</span>
             </div>
           </motion.div>
-          
+
           {/* Volume Control and additional buttons */}
           <div className="w-1/4 sm:w-1/4 flex justify-end items-center">
             {/* Mobile volume button - simplified for small screens */}
@@ -315,7 +315,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
             </button>
 
             {/* Like button - hidden on smallest screens */}
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation(); // Prevent triggering expand
                 setIsLiked(!isLiked);
@@ -333,9 +333,9 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                 </svg>
               )}
             </button>
-            
+
             {/* Save button - hidden on small screens */}
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation(); // Prevent triggering expand
                 setIsSaved(!isSaved);
@@ -353,13 +353,13 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                 </svg>
               )}
             </button>
-            
+
             {/* Desktop Volume Control */}
-            <div 
+            <div
               className="hidden sm:flex items-center space-x-1 text-gray-400"
               onClick={(e) => e.stopPropagation()} // Stop event propagation at container level
             >
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering expand
                   toggleMute(e);
@@ -381,7 +381,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                   </svg>
                 )}
               </button>
-              
+
               {/* Volume Slider */}
               <div className="relative" onClick={(e) => e.stopPropagation()}>
                 <input
@@ -407,7 +407,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
 
             {/* Mobile Volume Control - only visible when icon is clicked */}
             <div className="relative sm:hidden" ref={volumeRef} onClick={(e) => e.stopPropagation()}>
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering expand
                   toggleVolume(e);
@@ -425,10 +425,9 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                   </svg>
                 )}
               </button>
-              <div 
-                className={`absolute bottom-10 right-0 bg-gray-800 p-2 rounded shadow-lg transition-opacity ${
-                  isVolumeOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                }`}
+              <div
+                className={`absolute bottom-10 right-0 bg-gray-800 p-2 rounded shadow-lg transition-opacity ${isVolumeOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                  }`}
                 onClick={(e) => e.stopPropagation()} // Prevent volume click from expanding
               >
                 <input
@@ -446,7 +445,7 @@ const NowPlayingBar: React.FC<NowPlayingBarProps> = ({
                   onTouchStart={(e) => e.stopPropagation()}
                   className="w-24 cursor-pointer touch-manipulation"
                   aria-label="Volume"
-                  style={{height: '20px'}}
+                  style={{ height: '20px' }}
                 />
               </div>
             </div>

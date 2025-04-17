@@ -30,19 +30,19 @@ interface NavItemProps {
   isSidebarOpen?: boolean;
 }
 
-function NavItem({ 
-  icon, 
-  label, 
-  onClick = () => {}, 
-  isDropdown = false, 
-  isActive = false, 
+function NavItem({
+  icon,
+  label,
+  onClick = () => { },
+  isDropdown = false,
+  isActive = false,
   delay = 0,
   children,
   isSidebarOpen = false
 }: NavItemProps) {
   return (
     <div className="mb-1 transition-transform duration-500 ease-in-out" style={{ transitionDelay: `${delay}ms` }}>
-      <button 
+      <button
         className={`flex items-center justify-between w-full px-2.5 py-2 rounded-xl hover:bg-white/10 transition-colors text-left ${isActive ? 'bg-white/5' : ''}`}
         onClick={(e) => {
           console.log(`NavItem clicked: ${label}`);
@@ -58,7 +58,7 @@ function NavItem({
           <span className={`ml-2.5 font-medium text-sm whitespace-nowrap transition-opacity duration-300 text-gray-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} overflow-hidden text-ellipsis`}>{label}</span>
         </div>
         {isDropdown && (
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
             className={`w-4 h-4 transition-transform duration-300 text-gray-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} ${isActive ? 'rotate-180' : ''}`}
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
@@ -76,8 +76,8 @@ function NavItem({
 
 export default function Home() {
   const audioRef = useRef<HTMLAudioElement>(null);
-  
-  const { 
+
+  const {
     currentSongIndex,
     isPlaying,
     setIsPlaying,
@@ -97,56 +97,56 @@ export default function Home() {
 
   // Add state for managing dropdown menus
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  
+
   // Add state for expanded song card
   const [showExpandedCard, setShowExpandedCard] = useState(false);
-  
+
   // Add state for selected genre
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-  
+
   // Add state for selected playlist
   const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
-  
+
   // Add state for liked songs page
   const [showLikedSongs, setShowLikedSongs] = useState(false);
-  
+
   // Add state for saves page
   const [showSaves, setShowSaves] = useState(false);
-  
+
   // Add state for albums page
   const [showAlbums, setShowAlbums] = useState(false);
-  
+
   // Add state for podcasts page
   const [showPodcasts, setShowPodcasts] = useState(false);
-  
+
   // Add state for audiobooks page
   const [showAudiobooks, setShowAudiobooks] = useState(false);
-  
+
   // Add state for artists page
   const [showArtists, setShowArtists] = useState(false);
-  
+
   // Add state for sidebar visibility on mobile
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-  
+
   // Add state for profile popup
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  
+
   // Add state for notification popup
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  
+
   // Add state for shuffle
   const [isShuffleOn, setIsShuffleOn] = useState(false);
-  
+
   // Add state for repeat mode
   const [repeatMode, setRepeatMode] = useState(0); // 0: off, 1: repeat all, 2: repeat one
-  
+
   // Create refs for popup handling
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
-  
+
   // Create ref for the sidebar
   const sidebarRef = useRef<HTMLDivElement>(null);
-  
+
   // Toggle dropdown function
   const toggleDropdown = useCallback((id: string) => {
     setOpenDropdown(openDropdown === id ? null : id);
@@ -187,7 +187,7 @@ export default function Home() {
         setIsNotificationOpen(false);
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -198,32 +198,32 @@ export default function Home() {
   const handleExpandCard = useCallback(() => {
     setShowExpandedCard(true);
   }, []);
-  
+
   const handleCloseExpandedCard = useCallback(() => {
     setShowExpandedCard(false);
   }, []);
-  
+
   // Get suggested songs based on current song
   const getSuggestedSongs = useCallback(() => {
     if (!currentSong) return [];
-    
+
     // Get songs with the same artist
-    const sameArtist = songs.filter(song => 
+    const sameArtist = songs.filter(song =>
       song.artist === currentSong.artist && song.id !== currentSong.id
     );
-    
+
     // Add more songs to make up at least 10 suggestions
     let suggestions = [...sameArtist];
-    
+
     if (suggestions.length < 10) {
       // Add some other songs to reach at least 10 suggestions
-      const otherSongs = songs.filter(song => 
+      const otherSongs = songs.filter(song =>
         !suggestions.includes(song) && song.id !== currentSong.id
       ).slice(0, 10 - suggestions.length);
-      
+
       suggestions = [...suggestions, ...otherSongs];
     }
-    
+
     return suggestions;
   }, [currentSong]);
 
@@ -252,23 +252,23 @@ export default function Home() {
     setSelectedGenre(genre);
     resetOtherPages(['genre']);
   }, [resetOtherPages]);
-  
+
   // Handle closing the genre page
   const handleCloseGenrePage = useCallback(() => {
     setSelectedGenre(null);
   }, []);
-  
+
   // Handle playlist selection
   const handlePlaylistClick = useCallback((playlist: string) => {
     setSelectedPlaylist(playlist);
     resetOtherPages();
   }, [resetOtherPages]);
-  
+
   // Handle closing the playlist page
   const handleClosePlaylistPage = useCallback(() => {
     setSelectedPlaylist(null);
   }, []);
-  
+
   // Add event listener for custom navigation event
   useEffect(() => {
     const handleNavigateToPlaylist = (e: CustomEvent) => {
@@ -277,76 +277,76 @@ export default function Home() {
         resetOtherPages();
       }
     };
-    
+
     window.addEventListener('navigate-to-playlist', handleNavigateToPlaylist as EventListener);
-    
+
     return () => {
       window.removeEventListener('navigate-to-playlist', handleNavigateToPlaylist as EventListener);
     };
   }, [resetOtherPages]);
-  
+
   // Handle liked songs click
   const handleLikedSongsClick = useCallback(() => {
     console.log('Liked Songs clicked, setting showLikedSongs to true');
     setShowLikedSongs(true);
     resetOtherPages(['likedSongs']);
   }, [resetOtherPages]);
-  
+
   // Handle closing liked songs page
   const handleCloseLikedSongsPage = useCallback(() => {
     setShowLikedSongs(false);
   }, []);
-  
+
   // Handle saves click
   const handleSavesClick = useCallback(() => {
     setShowSaves(true);
     resetOtherPages(['saves']);
   }, [resetOtherPages]);
-  
+
   // Handle closing saves page
   const handleCloseSavesPage = useCallback(() => {
     setShowSaves(false);
   }, []);
-  
+
   // Handle albums click
   const handleAlbumsClick = useCallback(() => {
     setShowAlbums(true);
     resetOtherPages(['albums']);
   }, [resetOtherPages]);
-  
+
   // Handle closing albums page
   const handleCloseAlbumsPage = useCallback(() => {
     setShowAlbums(false);
   }, []);
-  
+
   // Handle podcasts click
   const handlePodcastsClick = useCallback(() => {
     setShowPodcasts(true);
     resetOtherPages(['podcasts']);
   }, [resetOtherPages]);
-  
+
   // Handle closing podcasts page
   const handleClosePodcastsPage = useCallback(() => {
     setShowPodcasts(false);
   }, []);
-  
+
   // Handle audiobooks click
   const handleAudiobooksClick = useCallback(() => {
     setShowAudiobooks(true);
     resetOtherPages(['audiobooks']);
   }, [resetOtherPages]);
-  
+
   // Handle closing audiobooks page
   const handleCloseAudiobooksPage = useCallback(() => {
     setShowAudiobooks(false);
   }, []);
-  
+
   // Handle artists click
   const handleArtistsClick = useCallback(() => {
     setShowArtists(true);
     resetOtherPages(['artists']);
   }, [resetOtherPages]);
-  
+
   // Handle closing artists page
   const handleCloseArtistsPage = useCallback(() => {
     setShowArtists(false);
@@ -361,8 +361,8 @@ export default function Home() {
           <div key={song.id} className="flex-shrink-0 w-[170px]" onClick={() => handleSongClick(song.id - 1)}>
             <div className="rounded-xl overflow-hidden bg-gray-50 p-3 shadow-sm hover:shadow-md transition-all cursor-pointer hover-card-animation">
               <div className="w-full aspect-square rounded-lg overflow-hidden mb-3">
-                <Image 
-                  src={song.cover} 
+                <Image
+                  src={song.cover}
                   alt={`${song.title} by ${song.artist}`}
                   width={170}
                   height={170}
@@ -383,7 +383,7 @@ export default function Home() {
   const renderRecentlyPlayed = useCallback(() => {
     // Only show the section if there are recently played songs
     if (recentlyPlayed.length === 0) return null;
-    
+
     return (
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-5 text-gray-800">Recently Played</h2>
@@ -394,8 +394,8 @@ export default function Home() {
               <div key={`recent-${song.id}`} className="flex-shrink-0 w-[170px]" onClick={() => handleSongClick(songIndex)}>
                 <div className="rounded-xl overflow-hidden bg-gray-50 p-3 shadow-sm hover:shadow-md transition-all cursor-pointer hover-card-animation">
                   <div className="w-full aspect-square rounded-lg overflow-hidden mb-3">
-                    <Image 
-                      src={song.cover} 
+                    <Image
+                      src={song.cover}
                       alt={`${song.title} by ${song.artist}`}
                       width={170}
                       height={170}
@@ -427,7 +427,7 @@ export default function Home() {
   useEffect(() => {
     if (audioRef.current && currentSong) {
       const audio = audioRef.current;
-      
+
       const handleEnded = () => {
         if (repeatMode === 2) {
           // Repeat one: replay the same song
@@ -452,9 +452,9 @@ export default function Home() {
           }
         }
       };
-      
+
       audio.addEventListener('ended', handleEnded);
-      
+
       return () => {
         audio.removeEventListener('ended', handleEnded);
       };
@@ -464,7 +464,7 @@ export default function Home() {
   return (
     <div className="h-screen flex overflow-hidden bg-gray-50 p-1 sm:p-2 md:p-3">
       {/* Sidebar - fixed height to match viewport with rounded edges and margin */}
-      <aside 
+      <aside
         ref={sidebarRef}
         className={`${isSidebarVisible ? 'translate-x-0 w-60' : '-translate-x-full sm:translate-x-0 sm:w-16'} 
         transition-all duration-300 ease-out fixed sm:static z-50 sm:z-20 group 
@@ -474,8 +474,8 @@ export default function Home() {
       >
         {/* Logo - combined collapsed/expanded view with conditional styling */}
         <div className="p-2.5 mb-6 flex items-center w-full">
-          <button 
-            className="w-10 h-10 bg-white text-gray-900 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-gray-200 transition-all cursor-pointer" 
+          <button
+            className="w-10 h-10 bg-white text-gray-900 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-gray-200 transition-all cursor-pointer"
             aria-label="Home"
             onClick={(e) => {
               e.preventDefault();
@@ -491,11 +491,11 @@ export default function Home() {
           </button>
           <span className={`ml-3 text-lg font-medium transition-opacity duration-300 text-gray-200 ${isSidebarVisible ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} whitespace-nowrap overflow-hidden`}>Library</span>
         </div>
-        
+
         {/* Navigation section */}
         <div className="flex flex-col gap-1 px-2 overflow-y-auto flex-grow scrollbar-hide">
           {/* Navigation icons - optimized to show in both collapsed/expanded states */}
-          <NavItem 
+          <NavItem
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z" />
@@ -512,8 +512,8 @@ export default function Home() {
             isSidebarOpen={isSidebarVisible}
           >
             <div className="ml-7 space-y-1 overflow-hidden">
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="flex items-center px-2.5 py-1.5 text-sm rounded-lg hover:bg-white/10 transition-colors"
                 onClick={(e) => {
                   e.preventDefault();
@@ -526,8 +526,8 @@ export default function Home() {
                 <div className="w-6 h-6 rounded-md bg-gradient-to-br from-purple-400 to-pink-500 flex-shrink-0 mr-2"></div>
                 <span className={`transition-opacity duration-300 text-gray-200 ${isSidebarVisible || openDropdown === 'playlists' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>Top Hits 2024</span>
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="flex items-center px-2.5 py-1.5 text-sm rounded-lg hover:bg-white/10 transition-colors"
                 onClick={(e) => {
                   e.preventDefault();
@@ -540,8 +540,8 @@ export default function Home() {
                 <div className="w-6 h-6 rounded-md bg-gradient-to-br from-blue-400 to-teal-500 flex-shrink-0 mr-2"></div>
                 <span className={`transition-opacity duration-300 text-gray-200 ${isSidebarVisible || openDropdown === 'playlists' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>Chill Vibes</span>
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="flex items-center px-2.5 py-1.5 text-sm rounded-lg hover:bg-white/10 transition-colors"
                 onClick={(e) => {
                   e.preventDefault();
@@ -557,7 +557,7 @@ export default function Home() {
             </div>
           </NavItem>
 
-          <NavItem 
+          <NavItem
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
@@ -573,9 +573,9 @@ export default function Home() {
             }}
             isSidebarOpen={isSidebarVisible}
           />
-          
+
           {/* Remaining NavItems with the mobile closing functionality added */}
-          <NavItem 
+          <NavItem
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
@@ -593,7 +593,7 @@ export default function Home() {
             isSidebarOpen={isSidebarVisible}
           />
 
-          <NavItem 
+          <NavItem
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
@@ -611,7 +611,7 @@ export default function Home() {
             isSidebarOpen={isSidebarVisible}
           />
 
-          <NavItem 
+          <NavItem
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" />
@@ -629,7 +629,7 @@ export default function Home() {
             isSidebarOpen={isSidebarVisible}
           />
 
-          <NavItem 
+          <NavItem
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
@@ -647,7 +647,7 @@ export default function Home() {
             isSidebarOpen={isSidebarVisible}
           />
 
-          <NavItem 
+          <NavItem
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
@@ -669,7 +669,7 @@ export default function Home() {
 
       {/* Overlay for mobile when sidebar is open */}
       {isSidebarVisible && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 sm:hidden"
           onClick={() => setIsSidebarVisible(false)}
           aria-hidden="true"
@@ -682,7 +682,7 @@ export default function Home() {
         <header className="flex items-center justify-between p-1.5 md:p-3 mb-1">
           <div className="flex items-center gap-2.5">
             {/* Library toggle button - only visible on mobile */}
-            <button 
+            <button
               className="sm:hidden w-8 h-8 flex items-center justify-center focus:outline-none text-neutral-600 hover:text-neutral-900 transition-colors"
               onClick={toggleSidebar}
               aria-label={isSidebarVisible ? "Close library" : "Open library"}
@@ -692,10 +692,10 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
               </svg>
             </button>
-            <h1 
+            <h1
               className="text-2xl font-bold tracking-tight cursor-pointer hover:text-neutral-700 transition-colors text-gray-900 leading-tight flex items-center"
               onClick={() => resetOtherPages()}
-              style={{ 
+              style={{
                 fontFamily: 'var(--font-geist-sans)',
                 letterSpacing: '-0.02em',
                 textShadow: '0 1px 2px rgba(0,0,0,0.05)'
@@ -722,17 +722,17 @@ export default function Home() {
                 aria-label="Search"
               />
             </div>
-            
+
             {/* Search icon for mobile */}
             <button className="sm:hidden w-8 h-8 flex items-center justify-center focus:outline-none text-neutral-600 hover:text-neutral-900 transition-colors" aria-label="Search">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4.5 h-4.5" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
             </button>
-            
+
             {/* Notification icon and popup */}
             <div className="relative" ref={notificationRef}>
-              <button 
+              <button
                 className="w-8 h-8 flex items-center justify-center focus:outline-none text-neutral-600 hover:text-neutral-900 transition-colors relative"
                 onClick={toggleNotification}
                 aria-label="Notifications"
@@ -743,7 +743,7 @@ export default function Home() {
                 </svg>
                 <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
               </button>
-              
+
               {/* Notification popup */}
               {isNotificationOpen && (
                 <div className="absolute right-0 top-full mt-1 w-80 bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden z-50 transition-all duration-200 ease-out transform origin-top-right">
@@ -789,10 +789,10 @@ export default function Home() {
                 </div>
               )}
             </div>
-            
+
             {/* Profile button and popup */}
             <div className="relative" ref={profileRef}>
-              <button 
+              <button
                 className="h-8 w-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors"
                 onClick={toggleProfile}
                 aria-label="User Profile"
@@ -802,7 +802,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                 </svg>
               </button>
-              
+
               {/* Profile popup */}
               {isProfileOpen && (
                 <div className="absolute right-0 top-full mt-1 w-60 bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden z-50 transition-all duration-200 ease-out transform origin-top-right">
@@ -850,7 +850,7 @@ export default function Home() {
         <div className="flex-1 flex flex-col mx-1 sm:mx-3 md:mx-6 mb-1 sm:mb-3 md:mb-6 bg-white rounded-xl sm:rounded-2xl shadow-md overflow-hidden border border-gray-100">
           {/* Main content area - conditionally render various pages */}
           {selectedGenre ? (
-            <GenrePage 
+            <GenrePage
               genreName={selectedGenre}
               onClose={handleCloseGenrePage}
               onSongSelect={handleSongSelect}
@@ -896,7 +896,7 @@ export default function Home() {
               <div className="p-3 sm:p-4 md:p-6">
                 {/* Render optimized sections */}
                 {renderNewReleases()}
-                
+
                 {/* Recently Played section */}
                 {renderRecentlyPlayed()}
 
@@ -904,7 +904,7 @@ export default function Home() {
                 <section className="mb-8">
                   <h2 className="text-xl font-semibold mb-5 text-gray-800">Featured Playlists</h2>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-                    <div 
+                    <div
                       className="bg-gray-50 p-4 rounded-2xl shadow-sm hover:shadow-md cursor-pointer hover-card-animation"
                       onClick={(e) => {
                         e.preventDefault();
@@ -915,7 +915,7 @@ export default function Home() {
                       <h3 className="font-medium text-sm mb-1 truncate text-gray-800">Top Hits 2024</h3>
                       <p className="text-xs text-gray-600 truncate">The hottest tracks right now</p>
                     </div>
-                    <div 
+                    <div
                       className="bg-gray-50 p-4 rounded-2xl shadow-sm hover:shadow-md cursor-pointer hover-card-animation"
                       onClick={(e) => {
                         e.preventDefault();
@@ -926,7 +926,7 @@ export default function Home() {
                       <h3 className="font-medium text-sm mb-1 truncate text-gray-800">Chill Vibes</h3>
                       <p className="text-xs text-gray-600 truncate">Relaxing tunes to unwind</p>
                     </div>
-                    <div 
+                    <div
                       className="bg-gray-50 p-4 rounded-2xl shadow-sm hover:shadow-md cursor-pointer hover-card-animation"
                       onClick={(e) => {
                         e.preventDefault();
@@ -953,7 +953,7 @@ export default function Home() {
                           <p className="text-gray-600 mb-4 sm:mb-8 text-xs sm:text-sm">Trending with &quot;{currentSong?.title}&quot;</p>
                         </div>
                         <div className="flex items-center gap-2 sm:gap-4">
-                          <button 
+                          <button
                             className="px-4 sm:px-8 py-2 sm:py-3 bg-gray-800 text-white rounded-full flex items-center justify-center gap-1 sm:gap-2 font-medium text-sm hover:bg-gray-700 transition-colors"
                             onClick={handlePlayPause}
                             aria-label={isPlaying ? "Pause" : "Play"}
@@ -990,9 +990,9 @@ export default function Home() {
                     </div>
                     <div className="md:w-2/5 w-full relative overflow-hidden md:h-auto bg-gray-100">
                       {currentSong?.cover ? (
-                        <Image 
-                          src={currentSong.cover} 
-                          alt={`${currentSong.artist} cover`} 
+                        <Image
+                          src={currentSong.cover}
+                          alt={`${currentSong.artist} cover`}
                           width={600}
                           height={600}
                           className="w-full h-full object-cover aspect-square md:aspect-auto min-h-[200px] sm:min-h-[300px]"
@@ -1012,7 +1012,7 @@ export default function Home() {
                     <h2 className="text-xl font-semibold mb-4 md:mb-5 text-gray-800">Popular</h2>
                     <div className="bg-gray-50 rounded-2xl shadow-sm overflow-hidden">
                       {songs.slice(0, 8).map((song, index) => (
-                        <div 
+                        <div
                           key={song.id}
                           className={`flex items-center p-3 sm:p-4 ${song.id - 1 === currentSongIndex ? 'bg-neutral-100' : ''} hover:bg-neutral-50 cursor-pointer transition-colors border-b border-neutral-100 last:border-b-0`}
                           onClick={() => handleSongClick(song.id - 1)}
@@ -1026,7 +1026,7 @@ export default function Home() {
                             <p className="text-xs sm:text-sm text-neutral-500 truncate">{song.artist}</p>
                           </div>
                           <div className="text-xs sm:text-sm text-neutral-500 mr-2 sm:mr-4">{song.duration}</div>
-                          <button 
+                          <button
                             className="text-neutral-400 hover:text-neutral-700 transition-colors p-1.5 sm:p-2"
                             aria-label={`Like ${song.title}`}
                           >
@@ -1038,14 +1038,14 @@ export default function Home() {
                       ))}
                     </div>
                   </section>
-                  
+
                   {/* Music card sections */}
                   <div className="grid grid-cols-1 gap-6 sm:gap-10">
                     {/* Picked for you */}
                     <section>
                       <div className="flex justify-between items-center mb-4 md:mb-5">
                         <h2 className="text-xl font-semibold text-gray-800">Recommended for you</h2>
-                        <button 
+                        <button
                           className="text-neutral-700 hover:text-neutral-900 transition-colors"
                           aria-label="View all recommendations"
                         >
@@ -1062,8 +1062,8 @@ export default function Home() {
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5">
                         {songs.slice(8, 20).map((song) => (
-                          <div 
-                            key={song.id} 
+                          <div
+                            key={song.id}
                             className="bg-gray-50 p-3 sm:p-4 rounded-2xl shadow-sm hover:shadow-md cursor-pointer hover-card-animation"
                             onClick={() => handleSongClick(song.id - 1)}
                           >
@@ -1076,12 +1076,12 @@ export default function Home() {
                         ))}
                       </div>
                     </section>
-                    
+
                     {/* Genres */}
                     <section>
                       <div className="flex justify-between items-center mb-4 md:mb-5">
                         <h2 className="text-xl font-semibold text-gray-800">Explore Genres</h2>
-                        <button 
+                        <button
                           className="text-neutral-700 hover:text-neutral-900 transition-colors"
                           aria-label="View all genres"
                           onClick={(e) => {
@@ -1108,8 +1108,8 @@ export default function Home() {
                           { name: "Acoustic", color: "bg-gradient-to-br from-violet-400 to-purple-500", songs: songs.filter(s => ["Vance Joy", "SYML", "Tom Rosenthal"].includes(s.artist)) },
                           { name: "Alternative", color: "bg-gradient-to-br from-amber-400 to-yellow-500", songs: songs.filter(s => ["New West", "The Rare Occasions", "Dr. Dog"].includes(s.artist)) }
                         ].map((genre, index) => (
-                          <div 
-                            key={index} 
+                          <div
+                            key={index}
                             className="bg-gray-50 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden relative h-24 sm:h-36 group"
                             onClick={(e) => {
                               e.preventDefault();
@@ -1125,12 +1125,12 @@ export default function Home() {
                         ))}
                       </div>
                     </section>
-                    
+
                     {/* Recently Added */}
                     <section>
                       <div className="flex justify-between items-center mb-4 md:mb-5">
                         <h2 className="text-xl font-semibold text-gray-800">Recently Added</h2>
-                        <button 
+                        <button
                           className="text-neutral-700 hover:text-neutral-900 transition-colors"
                           aria-label="View all recently added"
                         >
@@ -1147,8 +1147,8 @@ export default function Home() {
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5">
                         {songs.slice(20, 32).map((song) => (
-                          <div 
-                            key={song.id} 
+                          <div
+                            key={song.id}
                             className="bg-gray-50 p-3 sm:p-4 rounded-2xl shadow-sm hover:shadow-md cursor-pointer hover-card-animation"
                             onClick={() => handleSongClick(song.id - 1)}
                           >
@@ -1166,7 +1166,7 @@ export default function Home() {
               </div>
             </div>
           )}
-          
+
           {/* Now playing bar - fixed at bottom of container */}
           <div className="flex-shrink-0 bg-none">
             <MemoizedNowPlayingBar
@@ -1185,7 +1185,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      
+
       {/* Expanded Song Card */}
       {showExpandedCard && currentSong && (
         <ExpandedSongCard
@@ -1195,8 +1195,8 @@ export default function Home() {
           duration={duration}
           volume={volume}
           progressPercentage={
-            isFinite(progress) && isFinite(duration) && duration > 0 
-              ? Math.max(0, Math.min(100, (progress / duration) * 100)) 
+            isFinite(progress) && isFinite(duration) && duration > 0
+              ? Math.max(0, Math.min(100, (progress / duration) * 100))
               : 0
           }
           suggestedSongs={getSuggestedSongs()}
