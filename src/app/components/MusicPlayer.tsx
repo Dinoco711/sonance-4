@@ -179,6 +179,7 @@ export default function MusicPlayer({
         onTimeUpdate={handleTimeUpdate}
         onEnded={onNext}
         className="hidden"
+        type="audio/mpeg"
       />
     </div>
   );
