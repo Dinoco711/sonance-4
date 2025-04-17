@@ -4,7 +4,7 @@ const nextConfig = {
   
   images: {
     domains: ['images.unsplash.com', 'i.scdn.co', 'source.unsplash.com', 'picsum.photos', 'placehold.co','/public/cover','/public'],
-    unoptimized: process.env.NODE_ENV === "development",
+    unoptimized: True,
   },
   poweredByHeader: false,
   compress: true,
