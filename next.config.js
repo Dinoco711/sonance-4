@@ -3,7 +3,7 @@ const nextConfig = {
   output: "standalone",
   
   images: {
-    domains: ['images.unsplash.com', 'i.scdn.co', 'source.unsplash.com', 'picsum.photos', 'placehold.co','./public/cover','./public'],
+    domains: ['images.unsplash.com', 'i.scdn.co', 'source.unsplash.com', 'picsum.photos', 'placehold.co','/public/cover','/public'],
     unoptimized: process.env.NODE_ENV === "development",
   },
   poweredByHeader: false,
