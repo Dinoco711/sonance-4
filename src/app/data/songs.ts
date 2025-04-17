@@ -50,7 +50,7 @@ export const songs: Song[] = [
     title: "Pompeii",
     artist: "Bastille",
     album: "Bad Blood",
-    cover: "/cover/pompeii.jpg",
+    cover: "https://raw.githubusercontent.com/Dinoco711/sonance-assets/refs/heads/main/cover/pompeii.jpg",
     audioSrc: "https://media.githubusercontent.com/media/Dinoco711/sonance-assets/refs/heads/main/songs/pompeii.mp3",
     duration: "3:53"
   },
