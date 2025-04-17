@@ -14,8 +14,8 @@ export const songs: Song[] = [
     title: "Teenage Dream",
     artist: "Katy Perry",
     album: "Teenage Dream",
-    cover: "/assets/cover/teenage-dream.jpg",
-    audioSrc: "/assets/songs/teenage-dream.mp3",
+    cover: "assets/cover/teenage-dream.jpg",
+    audioSrc: "assets/songs/teenage-dream.mp3",
     duration: "3:48"
   },
   {
@@ -23,8 +23,8 @@ export const songs: Song[] = [
     title: "Counting Stars",
     artist: "OneRepublic",
     album: "Native",
-    cover: "/assets/cover/counting-stars.jpg",
-    audioSrc: "/assets/songs/counting-stars.mp3",
+    cover: "assets/cover/counting-stars.jpg",
+    audioSrc: "assets/songs/counting-stars.mp3",
     duration: "4:17"
   },
   {
@@ -32,8 +32,8 @@ export const songs: Song[] = [
     title: "As It Was",
     artist: "Harry Styles",
     album: "Harry's House",
-    cover: "/assets/cover/as-it-was.jpg",
-    audioSrc: "/assets/songs/as-it-was.mp3",
+    cover: "assets/cover/as-it-was.jpg",
+    audioSrc: "assets/songs/as-it-was.mp3",
     duration: "2:47"
   },
   {
@@ -41,8 +41,8 @@ export const songs: Song[] = [
     title: "Queen of the Cascades",
     artist: "Seatbelt",
     album: "Night Drive",
-    cover: "/assets/cover/queen-of-the-cascades.jpg",
-    audioSrc: "/assets/songs/queen-of-the-cascades.mp3",
+    cover: "assets/cover/queen-of-the-cascades.jpg",
+    audioSrc: "assets/songs/queen-of-the-cascades.mp3",
     duration: "3:42"
   },
   {
@@ -50,8 +50,8 @@ export const songs: Song[] = [
     title: "Pompeii",
     artist: "Bastille",
     album: "Bad Blood",
-    cover: "/assets/cover/pompeii.jpg",
-    audioSrc: "/assets/songs/pompeii.mp3",
+    cover: "assets/cover/pompeii.jpg",
+    audioSrc: "assets/songs/pompeii.mp3",
     duration: "3:53"
   },
   {
@@ -59,8 +59,8 @@ export const songs: Song[] = [
     title: "Way Down We Go",
     artist: "KALEO",
     album: "A/B",
-    cover: "/assets/cover/way-down-we-go.jpg",
-    audioSrc: "/assets/songs/way-down-we-go.mp3",
+    cover: "assets/cover/way-down-we-go.jpg",
+    audioSrc: "assets/songs/way-down-we-go.mp3",
     duration: "3:39"
   },
   {
@@ -68,8 +68,8 @@ export const songs: Song[] = [
     title: "Snap",
     artist: "Rosa Linn",
     album: "SNAP",
-    cover: "/assets/cover/snap.jpg",
-    audioSrc: "/assets/songs/snap.mp3",
+    cover: "assets/cover/snap.jpg",
+    audioSrc: "assets/songs/snap.mp3",
     duration: "2:58"
   },
   {
@@ -77,8 +77,8 @@ export const songs: Song[] = [
     title: "Make You Mine",
     artist: "PUBLIC",
     album: "Make You Mine",
-    cover: "/assets/cover/make-you-mine.jpg",
-    audioSrc: "/assets/songs/make-you-mine.mp3",
+    cover: "assets/cover/make-you-mine.jpg",
+    audioSrc: "assets/songs/make-you-mine.mp3",
     duration: "3:25"
   },
   {
@@ -86,8 +86,8 @@ export const songs: Song[] = [
     title: "Coastline",
     artist: "Hollow Coves",
     album: "Wanderlust",
-    cover: "/assets/cover/coastline.jpg",
-    audioSrc: "/assets/songs/coastline.mp3",
+    cover: "assets/cover/coastline.jpg",
+    audioSrc: "assets/songs/coastline.mp3",
     duration: "4:01"
   },
   {
@@ -95,8 +95,8 @@ export const songs: Song[] = [
     title: "I Think They Call This Love",
     artist: "Louyah",
     album: "I Think They Call This Love",
-    cover: "/assets/cover/i-think-they-call-this-love.jpg",
-    audioSrc: "/assets/songs/i-think-they-call-this-love.mp3",
+    cover: "assets/cover/i-think-they-call-this-love.jpg",
+    audioSrc: "assets/songs/i-think-they-call-this-love.mp3",
     duration: "3:27"
   },
   {
@@ -104,8 +104,8 @@ export const songs: Song[] = [
     title: "In My Room",
     artist: "Jacob Collier",
     album: "Djesse Vol. 1",
-    cover: "/assets/cover/in-my-room.jpg",
-    audioSrc: "/assets/songs/in-my-room.mp3",
+    cover: "assets/cover/in-my-room.jpg",
+    audioSrc: "assets/songs/in-my-room.mp3",
     duration: "3:12"
   },
   {
@@ -113,8 +113,8 @@ export const songs: Song[] = [
     title: "We Fell In Love In October",
     artist: "Girl in Red",
     album: "Chapter 1",
-    cover: "/assets/cover/we-fell-in-love-in-october.jpg",
-    audioSrc: "/assets/songs/we-fell-in-love-in-october.mp3",
+    cover: "assets/cover/we-fell-in-love-in-october.jpg",
+    audioSrc: "assets/songs/we-fell-in-love-in-october.mp3",
     duration: "2:56"
   },
   {
@@ -122,8 +122,8 @@ export const songs: Song[] = [
     title: "Notion",
     artist: "The Rare Occasions",
     album: "Notion",
-    cover: "/assets/cover/notion.jpg",
-    audioSrc: "/assets/songs/notion.mp3",
+    cover: "assets/cover/notion.jpg",
+    audioSrc: "assets/songs/notion.mp3",
     duration: "3:27"
   },
   {
@@ -131,8 +131,8 @@ export const songs: Song[] = [
     title: "Lights Are On",
     artist: "Tom Rosenthal",
     album: "Keep a Private Room Behind the Shop",
-    cover: "/assets/cover/lights-are-on.jpg",
-    audioSrc: "/assets/songs/lights-are-on.mp3",
+    cover: "assets/cover/lights-are-on.jpg",
+    audioSrc: "assets/songs/lights-are-on.mp3",
     duration: "3:31"
   },
   {
@@ -140,8 +140,8 @@ export const songs: Song[] = [
     title: "Spirits",
     artist: "The Strumbellas",
     album: "Hope",
-    cover: "/assets/cover/spirits.jpg",
-    audioSrc: "/assets/songs/spirits.mp3",
+    cover: "assets/cover/spirits.jpg",
+    audioSrc: "assets/songs/spirits.mp3",
     duration: "3:23"
   },
   {
@@ -149,8 +149,8 @@ export const songs: Song[] = [
     title: "Where'd All The Time Go",
     artist: "Dr. Dog",
     album: "Shame, Shame",
-    cover: "/assets/cover/whered-all-the-time-go.jpg",
-    audioSrc: "/assets/songs/whered-all-the-time-go.mp3",
+    cover: "assets/cover/whered-all-the-time-go.jpg",
+    audioSrc: "assets/songs/whered-all-the-time-go.mp3",
     duration: "4:11"
   },
   {
@@ -158,8 +158,8 @@ export const songs: Song[] = [
     title: "Blue",
     artist: "Eiffel 65",
     album: "Europop",
-    cover: "/assets/cover/blue.jpg",
-    audioSrc: "/assets/songs/blue.mp3",
+    cover: "assets/cover/blue.jpg",
+    audioSrc: "assets/songs/blue.mp3",
     duration: "3:40"
   },
   {
@@ -167,8 +167,8 @@ export const songs: Song[] = [
     title: "Je Te Laisserai Des Mots",
     artist: "Patrick Watson",
     album: "Wooden Arms",
-    cover: "/assets/cover/je-te-laisserai-des-mots.jpg",
-    audioSrc: "/assets/songs/je-te-laisserai-des-mots.mp3",
+    cover: "assets/cover/je-te-laisserai-des-mots.jpg",
+    audioSrc: "assets/songs/je-te-laisserai-des-mots.mp3",
     duration: "2:47"
   },
   {
@@ -176,8 +176,8 @@ export const songs: Song[] = [
     title: "Evergreen (feat. CAAMP)",
     artist: "Mt. Joy",
     album: "Orange Blood",
-    cover: "/assets/cover/evergreen-(feat-caamp).jpg",
-    audioSrc: "/assets/songs/evergreen-(feat-caamp).mp3",
+    cover: "assets/cover/evergreen-(feat-caamp).jpg",
+    audioSrc: "assets/songs/evergreen-(feat-caamp).mp3",
     duration: "3:22"
   },
   {
@@ -185,8 +185,8 @@ export const songs: Song[] = [
     title: "Love In The Dark",
     artist: "Adele",
     album: "25",
-    cover: "/assets/cover/love-in-the-dark.jpg",
-    audioSrc: "/assets/songs/love-in-the-dark.mp3",
+    cover: "assets/cover/love-in-the-dark.jpg",
+    audioSrc: "assets/songs/love-in-the-dark.mp3",
     duration: "4:46"
   },
   {
@@ -194,8 +194,8 @@ export const songs: Song[] = [
     title: "Sunsetz",
     artist: "Cigarettes After Sex",
     album: "Cigarettes After Sex",
-    cover: "/assets/cover/sunsetz.jpg",
-    audioSrc: "/assets/songs/sunsetz.mp3",
+    cover: "assets/cover/sunsetz.jpg",
+    audioSrc: "assets/songs/sunsetz.mp3",
     duration: "4:28"
   },
   {
@@ -203,8 +203,8 @@ export const songs: Song[] = [
     title: "Where's My Love (Acoustic)",
     artist: "SYML",
     album: "Where's My Love",
-    cover: "/assets/cover/wheres-my-love-(acoustic).jpg",
-    audioSrc: "/assets/songs/wheres-my-love-(acoustic).mp3",
+    cover: "assets/cover/wheres-my-love-(acoustic).jpg",
+    audioSrc: "assets/songs/wheres-my-love-(acoustic).mp3",
     duration: "3:38"
   },
   {
@@ -212,8 +212,8 @@ export const songs: Song[] = [
     title: "Die With A Smile",
     artist: "Lady Gaga & Bruno Mars",
     album: "Die With A Smile",
-    cover: "/assets/cover/die-with-a-smile.jpg",
-    audioSrc: "/assets/songs/die-with-a-smile.mp3",
+    cover: "assets/cover/die-with-a-smile.jpg",
+    audioSrc: "assets/songs/die-with-a-smile.mp3",
     duration: "3:36"
   },
   {
@@ -221,8 +221,8 @@ export const songs: Song[] = [
     title: "Beanie",
     artist: "Yokai",
     album: "Beanie",
-    cover: "/assets/cover/beanie.jpg",
-    audioSrc: "/assets/songs/beanie.mp3",
+    cover: "assets/cover/beanie.jpg",
+    audioSrc: "assets/songs/beanie.mp3",
     duration: "2:24"
   },
   {
@@ -230,8 +230,8 @@ export const songs: Song[] = [
     title: "Riptide",
     artist: "Vance Joy",
     album: "Dream Your Life Away",
-    cover: "/assets/cover/riptide.jpg",
-    audioSrc: "/assets/songs/riptide.mp3",
+    cover: "assets/cover/riptide.jpg",
+    audioSrc: "assets/songs/riptide.mp3",
     duration: "3:24"
   },
   {
@@ -239,8 +239,8 @@ export const songs: Song[] = [
     title: "Somewhere Only We Know",
     artist: "Keane",
     album: "Hopes and Fears",
-    cover: "/assets/cover/somewhere-only-we-know.jpg",
-    audioSrc: "/assets/songs/somewhere-only-we-know.mp3",
+    cover: "assets/cover/somewhere-only-we-know.jpg",
+    audioSrc: "assets/songs/somewhere-only-we-know.mp3",
     duration: "3:57"
   },
   {
@@ -248,8 +248,8 @@ export const songs: Song[] = [
     title: "End of Beginning",
     artist: "Djo",
     album: "Decide",
-    cover: "/assets/cover/end-of-beginning.jpg",
-    audioSrc: "/assets/songs/end-of-beginning.mp3",
+    cover: "assets/cover/end-of-beginning.jpg",
+    audioSrc: "assets/songs/end-of-beginning.mp3",
     duration: "2:44"
   },
   {
@@ -257,8 +257,8 @@ export const songs: Song[] = [
     title: "Those Eyes",
     artist: "New West",
     album: "Those Eyes",
-    cover: "/assets/cover/those-eyes.jpg",
-    audioSrc: "/assets/songs/those-eyes.mp3",
+    cover: "assets/cover/those-eyes.jpg",
+    audioSrc: "assets/songs/those-eyes.mp3",
     duration: "3:42"
   },
   {
@@ -266,8 +266,8 @@ export const songs: Song[] = [
     title: "Sweater Weather",
     artist: "The Neighbourhood",
     album: "I Love You.",
-    cover: "/assets/cover/sweater-weather.jpg",
-    audioSrc: "/assets/songs/sweater-weather.mp3",
+    cover: "assets/cover/sweater-weather.jpg",
+    audioSrc: "assets/songs/sweater-weather.mp3",
     duration: "4:00"
   },
   {
@@ -275,8 +275,8 @@ export const songs: Song[] = [
     title: "The Night We Met",
     artist: "Lord Huron",
     album: "Strange Trails",
-    cover: "/assets/cover/the-night-we-met.jpg",
-    audioSrc: "/assets/songs/the-night-we-met.mp3",
+    cover: "assets/cover/the-night-we-met.jpg",
+    audioSrc: "assets/songs/the-night-we-met.mp3",
     duration: "3:28"
   },
   {
@@ -284,8 +284,8 @@ export const songs: Song[] = [
     title: "Daylight",
     artist: "Taylor Swift",
     album: "Lover",
-    cover: "/assets/cover/daylight.jpg",
-    audioSrc: "/assets/songs/daylight.mp3",
+    cover: "assets/cover/daylight.jpg",
+    audioSrc: "assets/songs/daylight.mp3",
     duration: "4:53"
   },
   {
@@ -293,8 +293,8 @@ export const songs: Song[] = [
     title: "Sailor Song",
     artist: "Autoheart",
     album: "Punch",
-    cover: "/assets/cover/sailor-song.jpg",
-    audioSrc: "/assets/songs/sailor-song.mp3",
+    cover: "assets/cover/sailor-song.jpg",
+    audioSrc: "assets/songs/sailor-song.mp3",
     duration: "3:39"
   }
 ]; 
