@@ -32,13 +32,8 @@ export const songs: Song[] = [
     title: "As It Was",
     artist: "Harry Styles",
     album: "Harry's House",
-<<<<<<< HEAD
     cover: "https://github.com/Dinoco711/sonance-assets/blob/main/cover/as-it-was.jpg?raw=true",
     audioSrc: "https://media.githubusercontent.com/media/Dinoco711/sonance-assets/refs/heads/main/songs/as-it-was.mp3",
-=======
-    cover: "https://media.githubusercontent.com/media/Dinoco711/sonance-4/refs/heads/main/assets/cover/as-it-was.jpg",
-    audioSrc: "https://media.githubusercontent.com/media/Dinoco711/sonance-4/refs/heads/main/src/app/assets/songs/as-it-was.mp3",
->>>>>>> b72724972777f710010c2f4beff1f615fff456ae
     duration: "2:47"
   },
   {
