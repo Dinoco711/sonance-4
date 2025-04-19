@@ -15,6 +15,12 @@ interface MusicPlayerProps {
   onProgressChange: (time: number) => void;
 }
 
+interface ProgressBarProps {
+  progress: number;
+  duration: number;
+  onProgressChange: (time: number) => void;
+}
+
 export default function MusicPlayer({
   songs,
   currentSongIndex,
@@ -51,6 +57,7 @@ export default function MusicPlayer({
     }
   };
   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value);
     setProgress(time);
@@ -68,6 +75,112 @@ export default function MusicPlayer({
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const ProgressBar = ({ progress, duration, onProgressChange }: ProgressBarProps) => {
+    const [isDragging, setIsDragging] = useState(false);
+    const [localProgress, setLocalProgress] = useState(progress);
+    const progressBarRef = useRef<HTMLDivElement>(null);
+    const lastUpdateTime = useRef<number>(0);
+    const isUpdating = useRef<boolean>(false);
+
+    // Update local progress when not dragging and progress changes
+    useEffect(() => {
+      if (!isDragging && !isUpdating.current) {
+        setLocalProgress(progress);
+      }
+    }, [progress, isDragging]);
+
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+      setIsDragging(true);
+      isUpdating.current = true;
+      updateProgress(e);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (isDragging) {
+        updateProgress(e);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDragging) {
+        setIsDragging(false);
+        isUpdating.current = false;
+        onProgressChange(localProgress);
+      }
+    };
+
+    const updateProgress = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!progressBarRef.current) return;
+      
+      const rect = progressBarRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = Math.max(0, Math.min(1, x / rect.width));
+      const newTime = percentage * duration;
+      
+      // Throttle updates to prevent excessive re-renders
+      const now = performance.now();
+      if (now - lastUpdateTime.current > 16) { // ~60fps
+        setLocalProgress(newTime);
+        lastUpdateTime.current = now;
+      }
+    };
+
+    // Add event listeners for mouse up and move on the window
+    useEffect(() => {
+      const handleGlobalMouseUp = () => {
+        if (isDragging) {
+          setIsDragging(false);
+          isUpdating.current = false;
+          onProgressChange(localProgress);
+        }
+      };
+
+      const handleGlobalMouseMove = (e: MouseEvent) => {
+        if (isDragging && progressBarRef.current) {
+          const rect = progressBarRef.current.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const percentage = Math.max(0, Math.min(1, x / rect.width));
+          const newTime = percentage * duration;
+          
+          const now = performance.now();
+          if (now - lastUpdateTime.current > 16) {
+            setLocalProgress(newTime);
+            lastUpdateTime.current = now;
+          }
+        }
+      };
+
+      window.addEventListener('mouseup', handleGlobalMouseUp);
+      window.addEventListener('mousemove', handleGlobalMouseMove);
+
+      return () => {
+        window.removeEventListener('mouseup', handleGlobalMouseUp);
+        window.removeEventListener('mousemove', handleGlobalMouseMove);
+      };
+    }, [isDragging, duration, onProgressChange, localProgress]);
+
+    const progressPercentage = (localProgress / duration) * 100;
+
+    return (
+      <div className="w-full h-1 bg-gray-200 rounded-full cursor-pointer group">
+        <div
+          ref={progressBarRef}
+          className="relative h-full"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+        >
+          <div
+            className="absolute h-full bg-blue-500 rounded-full"
+            style={{ width: `${progressPercentage}%` }}
+          >
+            <div className="absolute right-0 w-3 h-3 -mt-1 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -94,14 +207,7 @@ export default function MusicPlayer({
         {/* Progress Bar */}
         <div className="mb-2 flex items-center gap-2">
           <span className="text-xs">{formatTime(progress)}</span>
-          <input
-            type="range"
-            min="0"
-            max={duration || 0}
-            value={progress}
-            onChange={handleProgressChange}
-            className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer"
-          />
+          <ProgressBar progress={progress} duration={duration} onProgressChange={onProgressChange} />
           <span className="text-xs">{formatTime(duration)}</span>
         </div>
         

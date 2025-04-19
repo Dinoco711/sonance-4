@@ -39,10 +39,10 @@ const AlbumsPage: React.FC<AlbumsPageProps> = ({ onClose, onSongSelect }) => {
     <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
       {/* Header with vinyl animation */}
       <div className="relative overflow-hidden h-72 bg-gradient-to-r from-indigo-900 to-blue-800">
-        <div className="absolute inset-0 overflow-hidden opacity-20">
+        <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
           <div className="absolute inset-x-0 top-0 h-full flex items-center justify-center">
-            <div className="w-96 h-96 rounded-full border-[20px] border-white/20 animate-spin-slow" style={{ animationDuration: '10s' }}></div>
-            <div className="w-60 h-60 rounded-full border-[10px] border-white/30 absolute animate-spin-slow" style={{ animationDuration: '20s', animationDirection: 'reverse' }}></div>
+            <div className="w-96 h-96 rounded-full border-[20px] border-white/20 animate-spin-slow" style={{ animationDuration: '10s', willChange: 'transform' }}></div>
+            <div className="w-60 h-60 rounded-full border-[10px] border-white/30 absolute animate-spin-slow" style={{ animationDuration: '20s', animationDirection: 'reverse', willChange: 'transform' }}></div>
             <div className="w-32 h-32 rounded-full bg-white/10 absolute"></div>
             <div className="w-4 h-4 rounded-full bg-white/60 absolute"></div>
           </div>

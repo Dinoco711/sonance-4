@@ -101,7 +101,7 @@ const PodcastsPage: React.FC<PodcastsPageProps> = ({ onClose }) => {
     <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
       {/* Header */}
       <div className="relative overflow-hidden h-72 bg-gradient-to-r from-purple-900 to-violet-700">
-        <div className="absolute inset-0 overflow-hidden opacity-20">
+        <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
           <div className="absolute inset-0">
             {Array(8).fill(0).map((_, i) => (
               <div 
@@ -114,7 +114,8 @@ const PodcastsPage: React.FC<PodcastsPageProps> = ({ onClose }) => {
                   left: `${Math.random() * 100}%`,
                   opacity: Math.random() * 0.4,
                   transform: `scale(${Math.random() * 0.5 + 0.5})`,
-                  animation: `pulse ${Math.random() * 4 + 3}s infinite alternate`
+                  animation: `pulse ${Math.random() * 4 + 3}s infinite alternate`,
+                  willChange: 'transform, opacity'
                 }}
               ></div>
             ))}
@@ -280,9 +281,10 @@ const PodcastsPage: React.FC<PodcastsPageProps> = ({ onClose }) => {
                               <span className="bg-neutral-100 text-neutral-600 text-xs px-2 py-0.5 rounded-full">Played</span>
                             )}
                           </div>
-                          <p className="text-xs text-neutral-500 line-clamp-1">
-                            {episode.date} • {episode.duration}
-                          </p>
+                          <div className="static-text">
+                            <p className="text-xs text-gray-500">{episode.date}</p>
+                            <p className="text-xs text-gray-500">{episode.duration}</p>
+                          </div>
                         </div>
                         <button className="text-neutral-400 hover:text-neutral-700 transition-colors">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">

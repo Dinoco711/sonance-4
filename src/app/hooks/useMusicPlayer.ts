@@ -12,22 +12,44 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
   const [recentlyPlayed, setRecentlyPlayed] = useState<number[]>([]);
   const internalAudioRef = useRef<HTMLAudioElement | null>(null);
   const animationRef = useRef<number | null>(null);
+  const lastProgressUpdate = useRef<number>(0);
+  const progressRef = useRef<number>(0);
   
   // Use the external audio ref if provided, otherwise use the internal one
   const audioRef = externalAudioRef || internalAudioRef;
 
-  // Handle time updates from the audio element
+  // Handle time updates from the audio element with throttling
   const handleTimeUpdate = useCallback(() => {
     if (audioRef.current) {
-      setProgress(audioRef.current.currentTime);
-      setDuration(audioRef.current.duration);
+      const currentTime = audioRef.current.currentTime;
+      const now = performance.now();
+      
+      // Update the ref immediately for internal tracking
+      progressRef.current = currentTime;
+      
+      // Throttle state updates to prevent excessive re-renders
+      if (now - lastProgressUpdate.current > 16) { // ~60fps
+        setProgress(currentTime);
+        lastProgressUpdate.current = now;
+      }
     }
   }, [audioRef]);
 
-  // More precise progress update using requestAnimationFrame
+  // More precise progress update using requestAnimationFrame with throttling
   const updateProgress = useCallback(() => {
     if (audioRef.current && isPlaying) {
-      setProgress(audioRef.current.currentTime);
+      const currentTime = audioRef.current.currentTime;
+      const now = performance.now();
+      
+      // Update the ref immediately for internal tracking
+      progressRef.current = currentTime;
+      
+      // Throttle state updates to prevent excessive re-renders
+      if (now - lastProgressUpdate.current > 16) { // ~60fps
+        setProgress(currentTime);
+        lastProgressUpdate.current = now;
+      }
+      
       animationRef.current = requestAnimationFrame(updateProgress);
     }
   }, [audioRef, isPlaying]);
@@ -51,12 +73,18 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
       
       // Add event listeners
       audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
+      audioRef.current.addEventListener('loadedmetadata', () => {
+        if (audioRef.current) {
+          setDuration(audioRef.current.duration);
+        }
+      });
       
       // Cleanup
       return () => {
         if (audioRef.current) {
           audioRef.current.pause();
           audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+          audioRef.current.removeEventListener('loadedmetadata', () => {});
         }
       };
     }
@@ -161,16 +189,16 @@ export function useMusicPlayer(songs: Song[], externalAudioRef?: RefObject<HTMLA
   const handleProgressChange = useCallback((time: number) => {
     // Validate that time is a finite, non-negative number before setting it
     if (isFinite(time) && time >= 0) {
-      setProgress(time);
+      const safeTime = Math.min(time, duration || 0);
+      progressRef.current = safeTime;
+      setProgress(safeTime);
       if (audioRef.current) {
-        // Ensure we don't exceed the audio duration
-        const safeTime = Math.min(time, audioRef.current.duration || 0);
         audioRef.current.currentTime = safeTime;
       }
     } else {
       console.warn('Invalid time value provided to handleProgressChange:', time);
     }
-  }, [audioRef]);
+  }, [audioRef, duration]);
 
   const handleVolumeChange = useCallback((newVolume: number) => {
     // Only update volume state without affecting any playback

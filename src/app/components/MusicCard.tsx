@@ -38,14 +38,10 @@ export default function MusicCard({ title, artist, onClick }: MusicCardProps) {
         {/* Create correct aspect ratio */}
         <div className="pt-[75%]"></div>
       </motion.div>
-      <motion.h3 
-        className="font-medium text-sm truncate text-gray-800"
-        transition={{ delay: 0.05 }}
-      >{title}</motion.h3>
-      <motion.p 
-        className="text-xs text-gray-600 truncate"
-        transition={{ delay: 0.1 }}
-      >{artist}</motion.p>
+      <div className="static-text">
+        <h3 className="font-medium text-sm truncate text-gray-800">{title}</h3>
+        <p className="text-xs text-gray-600 truncate">{artist}</p>
+      </div>
     </motion.div>
   );
 } 
